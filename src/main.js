@@ -5,11 +5,14 @@ import store from './store'
 import utils from './utils'
 import Web3 from 'web3'
 import filters from "./api/filter.js"
+import BigNumber from "bignumber.js";
 import '@/assets/css/reset.css'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.config.productionTip = false
 Vue.prototype.Web3 = Web3
 Vue.use(utils)
+Vue.use(VueClipboard)
 import {
 	Button,
 	Toast,

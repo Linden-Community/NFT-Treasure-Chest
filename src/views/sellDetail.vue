@@ -72,13 +72,13 @@
 						<van-cell title="Contract Address">
 							<template #right-icon>
 								<span class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
-								<img class="copyimg" @click="copyclick" src="../assets/images/copy.png">
+								<img class="copyimg" @click="copyclick(detaillist.contract)" src="../assets/images/copy.png">
 							</template>
 						</van-cell>
 						<van-cell title="Token ID">
 							<template #right-icon>
 								<span class="copyadd">{{detaillist.tokenId==null?'detaillisttokenId':detaillist.tokenId | ellipsis }}</span>
-								<img class="copyimg" @click="copyclick" src="../assets/images/copy.png">
+								<img class="copyimg" @click="copyclick(copyIds)" src="../assets/images/copy.png">
 							</template>
 						</van-cell>
 						
@@ -131,6 +131,7 @@
 				mychangedate: '',
 				shopid: '',
 				mytime: '',
+				copyIds:'',
 			}
 		},
 		mounted() {
@@ -150,8 +151,12 @@
 				})
 			},
 			//复制
-			copyclick(){
-				
+			copyclick(txt){
+				this.$copyText(txt).then(() => {
+					this.$toast('已成功复制到剪切板')
+				}).catch(() => {
+					this.$toast('复制失败')
+				})
 			},
 			// checked(index,item) {
 			// 	this.nowIndex = index
@@ -193,6 +198,7 @@
 				getNft(params).then(res => {
 					if (res.code == "200") {
 						this.detaillist = res.result
+						this.copyIds = res.result.tokenId
 					} else {
 						this.$toast(res.message)
 					}
@@ -216,7 +222,7 @@
 								const myContract = new web3.eth.Contract(Abi, address)
 								const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
 								//授权nft
-								myContract.methods.approve(addressNFT, this.shopid)
+								myContract.methods.approve(addressNFT, "107")
 									.send({
 										from: res[0]
 									}).then(res => {
@@ -225,13 +231,15 @@
 										console.log("授权error--->" + error.code, error.message)
 									})
 								//上架NFT商品（商品id 金额 时间）
-								myContractNft.methods.sell(this.detaillist.tokenId, web3.utils.toWei(this.amount, 'ether'),
-										this.mytime)
+								myContractNft.methods.sell("107", web3.utils.toWei(BigNumber(this.amount), 'ether'),
+										BigNumber(this.mytime))
 									.send({
 										from: res[0]
 									}).then(res => {
 										console.log('from res :' + res)
+										this.$toast(res)
 									}).catch((error) => {
+										this.$toast(error.message)
 										console.log("上架error--->" + error.code, error.message)
 									})
 							}
@@ -402,6 +410,7 @@
 	}
 
 	.contenttwotl {
+		display: inline;
 		width:350px;
 		font-size: 12px;
 		color: #666666;
@@ -418,7 +427,7 @@
 	}
 
 	.mycell {
-		background-color: #FFFFFF;
+		/* background-color: #FFFFFF; */
 	}
 
 	/deep/ .van-collapse-item__content {
@@ -484,7 +493,7 @@
 
 	.datatimebox {
 		z-index: 9999;
-		position: absolute;
+		position: fixed;
 		bottom: 0px;
 		left: 0;
 		right: 0;

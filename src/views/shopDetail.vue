@@ -37,14 +37,14 @@
 							<template #right-icon>
 								<span
 									class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
-								<img class="copyimg" @click="copyclick" src="../assets/images/copy.png">
+								<img class="copyimg" @click="copyclick(detaillist.contract)" src="../assets/images/copy.png">
 							</template>
 						</van-cell>
 						<van-cell title="Token ID">
 							<template #right-icon>
 								<span
 									class="copyadd">{{detaillist.tokenId==null?'detaillisttokenId':detaillist.tokenId | ellipsis }}</span>
-								<img class="copyimg" @click="copyclick" src="../assets/images/copy.png">
+								<img class="copyimg" @click="copyclick(copyIds)" src="../assets/images/copy.png">
 							</template>
 						</van-cell>
 						<van-cell title="Token Standard" value="ERC-721" />
@@ -93,6 +93,7 @@
 				activeNames: [0],
 				datalist: [],
 				detaillist: [],
+				copyIds:'',
 			}
 		},
 		mounted() {
@@ -100,8 +101,13 @@
 			this.loglist()
 		},
 		methods: {
-			copyclick() {
-
+			copyclick(txt) {
+				console.log(txt)
+				this.$copyText(txt).then(() => {
+					this.$toast('已成功复制到剪切板')
+				}).catch(() => {
+					this.$toast('复制失败')
+				})
 			},
 			//跳转他人地址
 			gootheraddress(address) {
@@ -124,7 +130,8 @@
 							//合约地址
 							const addressNFT = "0x250019C9E3EB59Ef6eFAB410408F6c8E246f5A24"
 							const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
-							myContractNft.methods.getOffShelfTime(this.detaillist.tokenId).call().then(timesTamp => {
+							myContractNft.methods.getOffShelfTime(this.detaillist.tokenId).call().then(
+							timesTamp => {
 								//获取当前时间戳单位毫秒
 								var dataTime = new Date().getTime()
 								//当前时间戳与上架时间（秒）相比
@@ -132,16 +139,17 @@
 								if (timesTamp * 1000 - dataTime > 0) {
 									//商品未下架获取商品价格
 									//NFT上架价格
-									myContractNft.methods.getPrices(this.detaillist.tokenId).call().then(prices => {
-										console.log('from prices :' + prices)
-									})
+									myContractNft.methods.getPrices(this.detaillist.tokenId).call().then(
+										prices => {
+											console.log('from prices :' + prices)
+										})
 									//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
 									myContractNft.methods.buy(this.detaillist.tokenId).send({
-											from: res[0],
-											value: web3.utils.toWei("0.02", 'ether') //动态获取商品价格
-										}).then(res => {
-											console.log('from res :' + res)
-										})
+										from: res[0],
+										value: web3.utils.toWei("0.02", 'ether') //动态获取商品价格
+									}).then(res => {
+										console.log('from res :' + res)
+									})
 								} else {
 									this.$toast('商品已下架')
 								}
@@ -159,6 +167,7 @@
 				getNft(params).then(res => {
 					if (res.code == "200") {
 						this.detaillist = res.result
+						this.copyIds = res.result.tokenId
 					} else {
 						this.$toast(res.message)
 					}
@@ -183,15 +192,14 @@
 	}
 </script>
 <style scoped>
-
 	.addurl {
 		border-bottom: 1px solid #333333;
 	}
 
 	.contentone {
-		border-top:10px solid #F7F7F7;
-		border-bottom:10px solid #F7F7F7;
-		padding:10px 16px;
+		border-top: 10px solid #F7F7F7;
+		border-bottom: 10px solid #F7F7F7;
+		padding: 10px 16px;
 	}
 
 	.onecelll {
@@ -204,7 +212,7 @@
 	}
 
 	.onecellr {
-		float:right;
+		float: right;
 		text-align: right;
 		color: #FF5603;
 		font-size: 12px;
@@ -229,17 +237,17 @@
 	}
 
 	.threecell {
-		width:343px;
+		width: 343px;
 	}
 
 	.threecell img {
-		width:100%;
-		margin:0 auto;
+		width: 100%;
+		margin: 0 auto;
 	}
 
 	.fourcell {
-		margin:0 auto;
-		height:35px;
+		margin: 0 auto;
+		height: 35px;
 		background: #FFFFFF;
 		font-size: 12px;
 		font-weight: 400;
@@ -248,8 +256,8 @@
 	}
 
 	.fourcelll {
-		width:200px;
-		display:inline-block;
+		width: 200px;
+		display: inline-block;
 	}
 
 	.fourcellone {
@@ -257,18 +265,18 @@
 	}
 
 	.fourcelltwo {
-		margin-left:5px;
+		margin-left: 5px;
 		color: #FF5603;
 	}
 
 	.fourcellr {
 		color: #999999;
 		float: right;
-		display:inline-block;
+		display: inline-block;
 	}
 
 	.contenttwo {
-		background:#FFFFFF;
+		background: #FFFFFF;
 	}
 
 	.contenttwoo {
@@ -279,15 +287,15 @@
 	}
 
 	.contenttwot {
-		height:50px;
-		line-height:50px;
-		display:flex;
+		height: 50px;
+		line-height: 50px;
+		display: flex;
 		border-bottom: 0.026667rem solid #D8D8D8;
-		padding:0px 20px 0 20px;
+		padding: 0px 20px 0 20px;
 	}
 
 	.contenttwotl {
-		width:350px;
+		width: 350px;
 	}
 
 	.contenttwotl img {

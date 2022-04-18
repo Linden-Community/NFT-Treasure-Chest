@@ -15,7 +15,8 @@
 					<div class="userInfoboxrb">
 						<span class="userInfoboxrbl"><img src="../assets/images/icon1.png"></span>
 						<span class="userInfoboxrbc">{{myAddress}}</span>
-						<span class="userInfoboxrbr"><img src="../assets/images/copy.png"></span>
+						<span class="userInfoboxrbr" @click="copyClick(myAddress)"><img
+								src="../assets/images/copy.png"></span>
 					</div>
 				</div>
 			</div>
@@ -28,67 +29,77 @@
 						<div>No items to display</div>
 					</div>
 					<div v-else>
-						<div v-if="index==0" class="onebox">
-							<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
-								@click="gotosell(item)">
-								<div class="oneboxl"><img :src="item.image">
-								</div>
-								<div class="oneboxr">
-									<div class="oneboxrt">
-										<span class="oneboxrtl">{{item.name}} #{{item.tokenId}}</span>
-										<span
-											class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+						<van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+							<div v-if="index==0" class="onebox">
+								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
+									@click="gotosell(item)">
+									<div class="oneboxl">
+										<img v-if="item.image==null" src="../assets/images/nolist.png">
+										<img v-else :src="item.image">
 									</div>
-									<div class="oneboxrc"></div>
-									<div class="oneboxrb">
-										<span class="oneboxrbl">Purchase time</span>
-										<span class="oneboxrbr">{{item.offSheftTime}}</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div v-else-if="index==1" class="onebox">
-							<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
-								<div class="oneboxl"><img :src="item.image">
-								</div>
-								<div class="oneboxr">
-									<div class="oneboxrt">
-										<span class="oneboxrtl">{{item.name}}</span>
-										<span class="oneboxrtl">#{{item.tokenId}}</span>
-										<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
-									</div>
-									<div class="oneboxrc">
-										<img src="../assets/images/icon1.png" />
-										{{item.price}}
-									</div>
-									<div class="oneboxrb">
-										<span class="oneboxrbl">Purchase time</span>
-										<span class="oneboxrbr">{{item.offSheftTime}}</span>
+									<div class="oneboxr">
+										<div class="oneboxrt">
+											<span class="oneboxrtl">{{item.name}} #{{item.tokenId}}</span>
+											<span
+												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+										</div>
+										<div class="oneboxrc"></div>
+										<div class="oneboxrb">
+											<span class="oneboxrbl">Purchase time</span>
+											<span class="oneboxrbr">{{item.offSheftTime}}</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div v-else-if="index==2" class="onebox">
-							<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
-								<div class="oneboxl"><img :src="item.image">
-								</div>
-								<div class="oneboxr">
-									<div class="oneboxrt">
-										<span class="oneboxrtl">{{item.name}}</span>
-										<span class="oneboxrtl">#{{item.tokenId}}</span>
-										<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+							<div v-else-if="index==1" class="onebox">
+								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
+									<div class="oneboxl">
+										<img v-if="item.image==null" src="../assets/images/nolist.png">
+										<img v-else :src="item.image">
 									</div>
-									<div class="oneboxrc">
-										<img src="../assets/images/icon1.png" />
-										{{item.price}}
-									</div>
-									<div class="oneboxrb">
-										<span class="oneboxrbl">Purchase time</span>
-										<span class="oneboxrbr">{{item.offSheftTime}}</span>
+									<div class="oneboxr">
+										<div class="oneboxrt">
+											<span class="oneboxrtl">{{item.name}}</span>
+											<span class="oneboxrtl">#{{item.tokenId}}</span>
+											<span
+												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+										</div>
+										<div class="oneboxrc">
+											<img src="../assets/images/icon1.png" />
+											{{item.price}}
+										</div>
+										<div class="oneboxrb">
+											<span class="oneboxrbl">Purchase time</span>
+											<span class="oneboxrbr">{{item.offSheftTime}}</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+							<div v-else-if="index==2" class="onebox">
+								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
+									<div class="oneboxl">
+										<img v-if="item.image==null" src="../assets/images/nolist.png">
+										<img v-else :src="item.image">
+									</div>
+									<div class="oneboxr">
+										<div class="oneboxrt">
+											<span class="oneboxrtl">{{item.name}}</span>
+											<span class="oneboxrtl">#{{item.tokenId}}</span>
+											<span
+												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+										</div>
+										<div class="oneboxrc">
+											<img src="../assets/images/icon1.png" />
+											{{item.price}}
+										</div>
+										<div class="oneboxrb">
+											<span class="oneboxrbl">Purchase time</span>
+											<span class="oneboxrbr">{{item.offSheftTime}}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</van-list>
 					</div>
 				</van-tab>
 			</van-tabs>
@@ -102,9 +113,10 @@
 	import {
 		Tab,
 		Tabs,
-		Icon
+		Icon,
+		List
 	} from 'vant'
-	Vue.use(Tab).use(Tabs).use(Icon)
+	Vue.use(Tab).use(Tabs).use(Icon).use(List)
 	import {
 		listSell,
 		listSellNum
@@ -116,13 +128,28 @@
 				active: '',
 				tablist: [],
 				sellList: [],
-				myAddress: ''
+				myAddress: '',
+				page:1,
+				num:10,
+				loading:false,
+				finished:false,
 			}
 		},
 		mounted() {
 			this.getAddress()
 		},
 		methods: {
+			onLoad(){
+				this.listRequest(0, this.myAddress)
+			},
+			//复制
+			copyClick(txt) {
+				this.$copyText(txt).then(() => {
+					this.$toast('已成功复制到剪切板')
+				}).catch(() => {
+					this.$toast('复制失败')
+				})
+			},
 			//get获去地址
 			getAddress() {
 				if (window.ethereum) {
@@ -135,7 +162,7 @@
 							this.listRequest(0, res[0])
 						}
 					})
-				}else {
+				} else {
 					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
 				}
 			},
@@ -156,21 +183,40 @@
 			},
 			listRequest(listtype, address) {
 				const params = {
-					pageNo: 1,
-					pageSize: 10,
+					pageNo: this.page,
+					pageSize: this.num,
 					owner: address,
 					type: listtype,
 				}
 				listSell(params).then(res => {
 					console.log("数据", res)
 					if (res.code == '200') {
-						if (listtype == 0) {
-							this.sellList = res.result.list
-						} else if (listtype == 1) {
-							this.sellList = res.result.list
-						} else if (listtype == 3) {
-							this.sellList = res.result.list
+						if(this.page==1){
+							if (listtype == 0) {
+								this.sellList = res.result.list
+								//this.sellList = [1,3,4,5,6,6,7,8,89,9,9,0,0,2,2,2,2,2,22,2,2,]
+							} else if (listtype == 1) {
+								this.sellList = res.result.list
+							} else if (listtype == 3) {
+								this.sellList = res.result.list
+							}
+						}else{
+							if (listtype == 0) {
+								this.sellList =this.sellList.concat(res.result.list)
+								//this.sellList = [1,3,4,5,6,6,7,8,89,9,9,0,0,2,2,2,2,2,22,2,2,]
+							} else if (listtype == 1) {
+								this.sellList =this.sellList.concat(res.result.list)
+							} else if (listtype == 3) {
+								this.sellList =this.sellList.concat(res.result.list)
+							}
 						}
+						this.loading =false
+						this.page++
+						if(res.result.list.length==0||res.result.list.length<10){
+							this.finished=true
+							return
+						}
+						
 					} else {
 						this.$toast(res.message)
 					}
@@ -208,7 +254,6 @@
 	}
 </script>
 <style scoped>
-
 	.nolist {
 		background: #F7F7F7;
 		width: 100%;
@@ -286,7 +331,7 @@
 	}
 
 	.userInfoboxr,
-	.userInfoboxl{
+	.userInfoboxl {
 		display: inline-block;
 		vertical-align: middle;
 	}
