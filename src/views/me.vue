@@ -29,7 +29,7 @@
 						<div>No items to display</div>
 					</div>
 					<div v-else>
-						<van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+						<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
 							<div v-if="index==0" class="onebox">
 								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 									@click="gotosell(item)">
@@ -66,7 +66,7 @@
 										</div>
 										<div class="oneboxrc">
 											<img src="../assets/images/icon1.png" />
-											{{item.price}}
+											{{item.price==null?'0':item.price}}
 										</div>
 										<div class="oneboxrb">
 											<span class="oneboxrbl">Purchase time</span>
@@ -89,7 +89,7 @@
 												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 										</div>
 										<div class="oneboxrc">
-											<img src="../assets/images/icon1.png" />
+											<img v-show="item.price!=null" src="../assets/images/icon1.png" />
 											{{item.price}}
 										</div>
 										<div class="oneboxrb">
@@ -129,18 +129,24 @@
 				tablist: [],
 				sellList: [],
 				myAddress: '',
-				page:1,
-				num:10,
-				loading:false,
-				finished:false,
+				page: 1,
+				num: 10,
+				loading: false,
+				finished: false,
+				finishedText:'',
+				mytype:0,
 			}
 		},
 		mounted() {
-			this.getAddress()
+			//this.getAddress()
+			this.myAddress = sessionStorage.getItem("myAddress")
+			this.getSellNum(this.myAddress)
+			this.listRequest(0, this.myAddress)
 		},
 		methods: {
-			onLoad(){
-				this.listRequest(0, this.myAddress)
+			onMore() {
+				this.page++
+				this.listRequest(this.mytype, this.myAddress)
 			},
 			//复制
 			copyClick(txt) {
@@ -151,21 +157,21 @@
 				})
 			},
 			//get获去地址
-			getAddress() {
-				if (window.ethereum) {
-					window.ethereum.enable().then((res) => {
-						if (!res[0]) {
-							this.$toast('请先登录小狐狸')
-						} else {
-							this.myAddress = res[0]
-							this.getSellNum(res[0])
-							this.listRequest(0, res[0])
-						}
-					})
-				} else {
-					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
-				}
-			},
+			// getAddress() {
+			// 	if (window.ethereum) {
+			// 		window.ethereum.enable().then((res) => {
+			// 			if (!res[0]) {
+			// 				this.$toast('请先登录小狐狸')
+			// 			} else {
+			// 				this.myAddress = res[0]
+			// 				this.getSellNum(res[0])
+			// 				this.listRequest(0, res[0])
+			// 			}
+			// 		})
+			// 	} else {
+			// 		this.$toast('请安装 MetaMask,浏览器才能开始使用。');
+			// 	}
+			// },
 			getSellNum(address) {
 				const params = {
 					owner: address,
@@ -189,52 +195,55 @@
 					type: listtype,
 				}
 				listSell(params).then(res => {
-					console.log("数据", res)
 					if (res.code == '200') {
-						if(this.page==1){
+						if (this.page == 1) {
 							if (listtype == 0) {
 								this.sellList = res.result.list
-								//this.sellList = [1,3,4,5,6,6,7,8,89,9,9,0,0,2,2,2,2,2,22,2,2,]
 							} else if (listtype == 1) {
 								this.sellList = res.result.list
 							} else if (listtype == 3) {
 								this.sellList = res.result.list
 							}
-						}else{
+						} else {
 							if (listtype == 0) {
-								this.sellList =this.sellList.concat(res.result.list)
-								//this.sellList = [1,3,4,5,6,6,7,8,89,9,9,0,0,2,2,2,2,2,22,2,2,]
+								this.sellList = this.sellList.concat(res.result.list)
 							} else if (listtype == 1) {
-								this.sellList =this.sellList.concat(res.result.list)
+								this.sellList = this.sellList.concat(res.result.list)
 							} else if (listtype == 3) {
-								this.sellList =this.sellList.concat(res.result.list)
+								this.sellList = this.sellList.concat(res.result.list)
 							}
 						}
-						this.loading =false
-						this.page++
-						if(res.result.list.length==0||res.result.list.length<10){
-							this.finished=true
+						this.loading = false
+						if (res.result.list.length == 0 || res.result.list.length < 10) {
+							this.finished = true
+							this.finishedText = '没有更多了...'
 							return
 						}
-						
+
 					} else {
 						this.$toast(res.message)
 					}
 				})
 			},
 			getInfo(id) {
+				this.page = 1
+				this.loading = true
+				this.finished = false
 				if (id == 0) {
+					this.mytype = 0
 					this.listRequest(0, this.myAddress)
 				} else if (id == 1) {
+					this.mytype = 1
 					this.listRequest(1, this.myAddress)
 				} else if (id == 2) {
+					this.mytype = 3
 					this.listRequest(3, this.myAddress)
 				}
 			},
 			search() {
 				this.$router.push({
 					name: 'search',
-					params: {
+					query: {
 						owneradd: this.myAddress
 					}
 				})
@@ -242,7 +251,7 @@
 			gotosell(item) {
 				this.$router.push({
 					name: 'sellDetail',
-					params: {
+					query: {
 						userId: item.id
 					}
 				})
@@ -375,9 +384,11 @@
 
 	.onebox {
 		border-top: 5px solid #F7F7F7;
-		margin-bottom: 50px;
+		/* margin-bottom: 50px; */
 	}
-
+.van-list{
+	margin-bottom: 50px;
+}
 	.oneboxcell {
 		width: 350px;
 		margin: 4px auto 8px auto;
@@ -417,7 +428,6 @@
 		color: #FFA415;
 		text-align: right;
 	}
-
 	.oneboxrc img {
 		width: 12px;
 		height: 12px;

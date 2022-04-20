@@ -19,3 +19,6 @@ export const getNft = (params) => request.post('/metadataserver/msNft/getNft',pa
 
 //搜索接口
 export const getSearch = (params) => request.post('/metadataserver/msNft/search',params)
+
+//铸币页面
+export const setCoin = (params) => request.post('/metadataserver/metadataV2',params)

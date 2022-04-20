@@ -1,33 +1,37 @@
 <template>
 	<div class="wrap">
-		<van-nav-bar title="List of NFTs" @click-right="onClickRight">
-			<template #right>
-				<van-icon name="search" size="25" />
-			</template>
-		</van-nav-bar>
+		<div class="headerbox">
+			<van-nav-bar title="List of NFTs" @click-right="onClickRight">
+				<template #right>
+					<van-icon name="search" size="25" />
+				</template>
+			</van-nav-bar>
+		</div>
 		<div v-if="shoplist.length==0" class="nolist">
 			<div><img src="../assets/images/nolist.png" /></div>
 			<div>No items to display</div>
 		</div>
 		<!-- 列表 -->
 		<div class="content-box" v-else>
-			<div class="content-boxleft" v-for="(item,index) in shoplist" :key='index' @click="godetail(item)">
-				<!-- item.image -->
-				<img v-if="item.image==null" class="boximg" src="../assets/images/nolist.png" />
-				<img v-else class="boximg" :src="item.image" />
-				<div class="boxleft">
-					<span class="boxleftonel">User name</span>
-					<span class="boxleftoner">Price</span>
+			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
+				<div class="content-boxleft" v-for="(item,index) in shoplist" :key='index' @click="godetail(item)">
+					<!-- item.image -->
+					<img v-if="item.image==null" class="boximg" src="../assets/images/nolist.png" />
+					<img v-else class="boximg" :src="item.image" />
+					<div class="boxleft">
+						<span class="boxleftonel">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+						<span class="boxleftoner">Price</span>
+					</div>
+					<div class="boxleft">
+						<span class="boxlefttwol omit">{{item.name==null?'name':item.name}}</span>
+						<span class="boxlefttwor omit"><img src="../assets/images/icon1.png">{{item.price}}</span>
+					</div>
+					<div class="boxleft">
+						<span class="boxleftthreel omit">#{{item.tokenId}}</span>
+						<span class="boxleftthreer omit">{{item.offSheftTime}}</span>
+					</div>
 				</div>
-				<div class="boxleft">
-					<span class="boxlefttwol omit">{{item.name==null?'name':item.name}}</span>
-					<span class="boxlefttwor omit"><img src="../assets/images/icon1.png">{{item.price}}</span>
-				</div>
-				<div class="boxleft">
-					<span class="boxleftthreel omit">#{{item.tokenId}}</span>
-					<span class="boxleftthreer omit">{{item.offSheftTime}}</span>
-				</div>
-			</div>
+			</van-list>
 		</div>
 		<foot-bar v-if="$route.meta.isMenu"></foot-bar>
 	</div>
@@ -39,9 +43,10 @@
 	import Vue from 'vue'
 	import {
 		NavBar,
-		Icon
+		Icon,
+		List
 	} from 'vant'
-	Vue.use(NavBar).use(Icon)
+	Vue.use(NavBar).use(Icon).use(List)
 	import {
 		getShopDetail,
 		listNft
@@ -51,7 +56,12 @@
 			return {
 				myShop: [],
 				shopImage: '',
-				shoplist: []
+				shoplist: [],
+				page: 1,
+				num: 10,
+				loading: false,
+				finished: false,
+				finishedText: '',
 			}
 		},
 		mounted() {
@@ -59,15 +69,29 @@
 			this.empower() //授权账户
 		},
 		methods: {
+			onMore() {
+				this.page++
+				this.listRequest()
+			},
 			//nft列表
 			listRequest() {
 				const params = {
-					pageNo: 1,
-					pageSize: 10,
+					pageNo: this.page,
+					pageSize: this.num,
 				}
 				listNft(params).then(res => {
 					if (res.code == '200') {
-						this.shoplist = res.result.list
+						if (this.page == 1) {
+							this.shoplist = res.result.list
+						} else {
+							this.shoplist = this.shoplist.concat(res.result.list)
+						}
+						this.loading = false
+						if (res.result.list.length == 0 || res.result.list.length < 10) {
+							this.finished = true
+							this.finishedText = '没有更多了...'
+							return
+						}
 					} else {
 						this.$toast(res.message)
 					}
@@ -75,20 +99,25 @@
 			},
 			//跳转详情
 			godetail(item) {
-				//this.$router.push({path: 'shopDetail', query: {selected: "2"}})
 				this.$router.push({
-					name: 'shopDetail',
-					params: {
+					path: 'shopDetail',
+					query: {
 						userId: item.id
 					}
 				})
+				// this.$router.push({
+				// 	name: 'shopDetail',
+				// 	params: {
+				// 		userId: item.id
+				// 	}
+				// })
 			},
 			//跳转搜索
 			onClickRight() {
 				this.$router.push({
 					name: 'search',
-					params: {
-						owneradd: ''
+					query: {
+						owneradd: '1'
 					}
 				})
 			},
@@ -98,13 +127,14 @@
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
 							this.$toast('请先登录小狐狸')
-						}
+						} 
+						sessionStorage.setItem("myAddress", res[0])
 					})
 				} else {
-					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
+					this.$toast('请安装MetaMask,浏览器才能开始使用。');
 				}
 			},
-			
+
 			get() {
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
@@ -248,19 +278,6 @@
 					console.log("数据", res, 111)
 				})
 			},
-			//获取上架时间
-			getTime() {
-
-			},
-			//获取价格
-			getPrices() {
-
-			},
-			//获取归属人
-			getPeople() {
-
-			}
-
 		},
 		components: {
 			footBar
@@ -268,6 +285,11 @@
 	}
 </script>
 <style scoped>
+	.headerbox {
+		position: fixed;
+		width: 100%;
+		z-index: 9999;
+	}
 
 	.nolist {
 		background: #F7F7F7;
@@ -309,7 +331,9 @@
 
 	.content-box {
 		border-top: solid 10px #F7F7F7;
-		padding: 10px 16px 100px 16px;
+		padding: 10px 16px 50px 16px;
+		position: absolute;
+		top: 45px;
 	}
 
 	.content-boxleft {
@@ -323,7 +347,7 @@
 	}
 
 	.content-boxleft:nth-child(2n) {
-		float:right
+		float: right
 	}
 
 	.boximg {
@@ -341,20 +365,20 @@
 	}
 
 	.boxleftoner {
-		color:#999999;
-		float:right;
-		text-align:right;
+		color: #999999;
+		float: right;
+		text-align: right;
 	}
 
 	.boxlefttwol {
-		color:#333333;
-		width :50px;
+		color: #333333;
+		width: 50px;
 	}
 
 	.boxlefttwor {
 		color: #F4BB0B;
 		float: right;
-		width:80px;
+		width: 80px;
 		text-align: right;
 	}
 

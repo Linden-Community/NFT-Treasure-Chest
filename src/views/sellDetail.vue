@@ -1,6 +1,8 @@
 <template>
 	<div class="wrap">
+		<div class="headerbox">
 		<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
+		</div>
 		<div class="contentone">
 			<div class="onecell"><span class="onecelll">Minted by</span><span @click="gootheraddress(detaillist.creator)" class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
 			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span><span
@@ -135,8 +137,8 @@
 			}
 		},
 		mounted() {
-			this.shopid = this.$route.params.userId
-			this.detailNft(this.$route.params.userId)
+			this.shopid = this.$route.query.userId
+			this.detailNft(this.$route.query.userId)
 			this.putdate()
 			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(0)) + ' ( 1 Day ) '
 		},
@@ -145,7 +147,7 @@
 				console.log(address)
 				this.$router.push({
 					name: 'otherList',
-					params: {
+					query: {
 						address: address
 					}
 				})
@@ -253,6 +255,12 @@
 	}
 </script>
 <style scoped>
+	.headerbox {
+		position: fixed;
+		width: 100%;
+		top:0;
+		border-bottom: 10px solid #F7F7F7;
+	}
 .onecelll {
 		height: 14px;
 		font-size: 14px;
@@ -273,9 +281,9 @@
 	}
 
 	.contentone {
-		border-top:10px solid #F7F7F7;
 		border-bottom:10px solid #F7F7F7;
-		padding:10px 16px;
+		padding:20px 16px 10px 16px;
+		margin-top: 45px;
 	}
 
 	.onecell {

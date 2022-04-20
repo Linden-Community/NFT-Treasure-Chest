@@ -10,6 +10,7 @@
 			<div>No items to display</div>
 		</div>
 		<div v-else class="onebox">
+			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
 			<div class="oneboxcell" v-for="(item,index) in searchlist" :key='index' :title="item">
 				<div class="oneboxl"><img src="https://cdn.jsdelivr.net/npm/@vant/assets/cat.jpeg"></div>
 				<div class="oneboxr">
@@ -28,15 +29,16 @@
 					</div>
 				</div>
 			</div>
+			</van-list>
 		</div>
 	</div>
 </template>
 <script>
 	import Vue from 'vue'
 	import {
-		Search,Icon 
+		Search,Icon,List
 	} from 'vant'
-	Vue.use(Search).use(Icon)
+	Vue.use(Search).use(Icon).use(List)
 	import {
 		getSearch
 	} from "../api";
@@ -47,29 +49,49 @@
 				searchkey:'',
 				searchlist: [],
 				pagetype:'0',
-				owneradd:''
+				owneradd:'',
+				page: 1,
+				num: 10,
+				loading: false,
+				finished: false,
+				finishedText: '',
 			}
 		},
 		mounted() {
 			//传参数判断是那个入口（我的页面owneradd="owneradd"和首页owneradd=""）
-			this.owneradd = this.$route.params.owneradd
-			console.log(this.$route.params.owneradd)
+			this.owneradd = this.$route.query.owneradd=='1'?'':this.$route.query.owneradd
+			console.log(this.$route.query.owneradd)
 		},
 		methods: {
+			onMore() {
+				this.page++
+				this.onSearch()
+			},
 			onSearch(){
 				this.searchRequest(this.owneradd)
 			},
 			searchRequest(owner){
 				const params = {
-					pageNo: 1,
-					pageSize: 10,
+					pageNo: this.page,
+					pageSize: this.num,
 					search:this.searchkey,
 					owner:owner,
 				}
 				getSearch(params).then(res => {
 					if (res.code == '200') {
-						this.searchlist = res.result.list
+						if (this.page == 1) {
+							this.searchlist = res.result.list
+						} else {
+							this.searchlist = this.searchlist.concat(res.result.list)
+						}
+						this.loading = false
+						if (res.result.list.length == 0 || res.result.list.length < 10) {
+							this.finished = true
+							this.finishedText = '没有更多了...'
+							return
+						}
 					} else {
+						this.searchlist = []
 						this.$toast(res.message)
 					}
 				})
@@ -78,14 +100,15 @@
 	}
 </script>
 <style scoped>
-	.searchboxs{
-		width:100%;
-	}
 	.searchbox{	
-		text-align: center;
+		position: fixed;
 		width: 100%;
+		z-index: 9999;
+		text-align: center;
 		display:inline-block;
 		justify-content:space-between;
+		border-bottom: 5px solid #F7F7F7;
+		background: #ffff;
 	}
 	.searchone,.searchtwo,.searchthree{
 		display:inline-block;
@@ -125,9 +148,7 @@
 		text-align:right;
 	}
 	.onebox {
-		border-top: 5px solid #F7F7F7;
-		border-bottom: 5px solid #F7F7F7;
-		margin-bottom: 50px;
+		padding-top: 60px;
 	}
 	
 	.oneboxcell {

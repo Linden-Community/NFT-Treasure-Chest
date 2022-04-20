@@ -64,8 +64,8 @@
 			}
 		},
 		mounted() {
-			this.myAddress = this.$route.params.address
-			this.listRequest(3, this.$route.params.address)
+			this.myAddress = this.$route.query.address
+			this.listRequest(3, this.$route.query.address)
 		},
 		methods: {
 			listRequest(listtype, address) {
@@ -87,7 +87,7 @@
 			gotosell(item) {
 				this.$router.push({
 					name: 'sellDetail',
-					params: {
+					query: {
 						userId: item.id
 					}
 				})

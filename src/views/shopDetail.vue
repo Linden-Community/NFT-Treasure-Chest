@@ -1,6 +1,8 @@
 <template>
 	<div class="wrap">
+		<div class="headerbox">
 		<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
+		</div>
 		<div class="contentone">
 			<div class="onecell"><span class="onecelll">Minted by</span><span
 					@click="gootheraddress(detaillist.creator)"
@@ -50,22 +52,24 @@
 						<van-cell title="Token Standard" value="ERC-721" />
 						<van-cell title="Blockchain" value="BNB" />
 					</van-collapse-item>
-					<van-collapse-item title="Price History" name="2" icon="shop-o" class='mycell'>
-						<van-row justify="space-between">
-							<van-col span="6">Current Price</van-col>
-							<van-col span="6">Form</van-col>
-							<van-col span="6">To</van-col>
-							<van-col span="6">Date</van-col>
-						</van-row>
-						<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
-							<van-col span="6">{{item.price}}</van-col>
-							<van-col span="6"><span class="addurl"
-									@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
-							<van-col span="6"><span class="addurl"
-									@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
-							<van-col span="6">{{item.createTime | ellipsis}}</van-col>
-						</van-row>
-					</van-collapse-item>
+					<van-list v-model:loading="loading" :finished="finished" @load="onMore">
+						<van-collapse-item title="Price History" name="2" icon="shop-o" class='mycell'>
+							<van-row justify="space-between">
+								<van-col span="6">Current Price</van-col>
+								<van-col span="6">Form</van-col>
+								<van-col span="6">To</van-col>
+								<van-col span="6">Date</van-col>
+							</van-row>
+							<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
+								<van-col span="6">{{item.price}}</van-col>
+								<van-col span="6"><span class="addurl"
+										@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
+								<van-col span="6"><span class="addurl"
+										@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
+								<van-col span="6">{{item.createTime | ellipsis}}</van-col>
+							</van-row>
+						</van-collapse-item>
+					</van-list>
 				</van-collapse>
 			</div>
 		</div>
@@ -80,12 +84,13 @@
 		Cell,
 		Col,
 		Row,
-		NavBar
+		NavBar,
+		List
 	} from 'vant'
-	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Col).use(Row).use(NavBar)
+	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Col).use(Row).use(NavBar).use(List)
 	import {
 		listLog,
-		getNft
+		getNft,
 	} from "../api";
 	export default {
 		data() {
@@ -94,13 +99,21 @@
 				datalist: [],
 				detaillist: [],
 				copyIds:'',
+				page: 1,
+				num: 10,
+				loading: false,
+				finished: false,
 			}
 		},
 		mounted() {
-			this.detailNft(this.$route.params.userId)
+			this.detailNft(this.$route.query.userId)
 			this.loglist()
 		},
 		methods: {
+			onMore() {
+				this.page++
+				this.loglist()
+			},
 			copyclick(txt) {
 				console.log(txt)
 				this.$copyText(txt).then(() => {
@@ -114,7 +127,7 @@
 				console.log(address)
 				this.$router.push({
 					name: 'otherList',
-					params: {
+					query: {
 						address: address
 					}
 				})
@@ -175,14 +188,23 @@
 			},
 			loglist() {
 				const params = {
-					pageNo: 1,
-					pageSize: 10,
+					pageNo: this.page,
+					pageSize: this.num,
 					tokenId: "321",
 					contract: "0x250019c9e3eb59ef6efab410408f6c8e246f5a24",
 				}
 				listLog(params).then(res => {
 					if (res.code == "200") {
-						this.datalist = res.result.list
+						if (this.page == 1) {
+							this.datalist = res.result.list
+						}else{
+							this.datalist = this.datalist.concat(res.result.list)
+						}
+						this.loading = false
+						if (res.result.list.length == 0 || res.result.list.length < 10) {
+							this.finished = true
+							return
+						}	
 					} else {
 						this.$toast(res.message)
 					}
@@ -192,14 +214,20 @@
 	}
 </script>
 <style scoped>
+	.headerbox {
+		position: fixed;
+		width: 100%;
+		top:0;
+		border-bottom: 10px solid #F7F7F7;
+	}
 	.addurl {
 		border-bottom: 1px solid #333333;
 	}
 
 	.contentone {
-		border-top: 10px solid #F7F7F7;
 		border-bottom: 10px solid #F7F7F7;
-		padding: 10px 16px;
+		padding: 20px 16px 10px 16px;
+		margin-top: 45px;
 	}
 
 	.onecelll {
