@@ -35,11 +35,11 @@
 									@click="gotosell(item)">
 									<div class="oneboxl">
 										<img v-if="item.image==null" src="../assets/images/nolist.png">
-										<img v-else :src="item.image">
+										<img v-else src="item.image">
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
-											<span class="oneboxrtl">{{item.name}} #{{item.tokenId}}</span>
+											<span class="oneboxrtl">{{item.name}}{{`#${item.tokenId}` | ellipsis}}</span>
 											<span
 												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 										</div>
@@ -60,7 +60,7 @@
 									<div class="oneboxr">
 										<div class="oneboxrt">
 											<span class="oneboxrtl">{{item.name}}</span>
-											<span class="oneboxrtl">#{{item.tokenId}}</span>
+											<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
 											<span
 												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 										</div>
@@ -84,7 +84,7 @@
 									<div class="oneboxr">
 										<div class="oneboxrt">
 											<span class="oneboxrtl">{{item.name}}</span>
-											<span class="oneboxrtl">#{{item.tokenId}}</span>
+											<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
 											<span
 												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 										</div>

@@ -1,135 +1,320 @@
 module.exports = [{
-	"inputs": [],
-	"stateMutability": "nonpayable",
-	"type": "constructor"
-}, {
 	"anonymous": false,
 	"inputs": [{
-		"indexed": true,
+		"indexed": false,
 		"internalType": "address",
-		"name": "owner",
-		"type": "address"
-	}, {
-		"indexed": true,
-		"internalType": "address",
-		"name": "approved",
-		"type": "address"
-	}, {
-		"indexed": true,
-		"internalType": "uint256",
-		"name": "tokenId",
-		"type": "uint256"
-	}],
-	"name": "Approval",
-	"type": "event"
-}, {
-	"anonymous": false,
-	"inputs": [{
-		"indexed": true,
-		"internalType": "address",
-		"name": "owner",
-		"type": "address"
-	}, {
-		"indexed": true,
-		"internalType": "address",
-		"name": "operator",
+		"name": "previousAdmin",
 		"type": "address"
 	}, {
 		"indexed": false,
-		"internalType": "bool",
-		"name": "approved",
-		"type": "bool"
+		"internalType": "address",
+		"name": "newAdmin",
+		"type": "address"
 	}],
-	"name": "ApprovalForAll",
+	"name": "AdminChanged",
 	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
 		"indexed": true,
 		"internalType": "address",
-		"name": "previousOwner",
+		"name": "beacon",
+		"type": "address"
+	}],
+	"name": "BeaconUpgraded",
+	"type": "event"
+}, {
+	"anonymous": false,
+	"inputs": [{
+		"indexed": false,
+		"internalType": "address",
+		"name": "owner",
+		"type": "address"
+	}, {
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "tokenId",
+		"type": "uint256"
+	}, {
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "price",
+		"type": "uint256"
+	}, {
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "timestamps",
+		"type": "uint256"
+	}],
+	"name": "DoneOnShelf",
+	"type": "event"
+}, {
+	"anonymous": false,
+	"inputs": [{
+		"indexed": false,
+		"internalType": "address",
+		"name": "from",
+		"type": "address"
+	}, {
+		"indexed": false,
+		"internalType": "address",
+		"name": "to",
+		"type": "address"
+	}, {
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "tokenId",
+		"type": "uint256"
+	}, {
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "price",
+		"type": "uint256"
+	}],
+	"name": "DonePurchase",
+	"type": "event"
+}, {
+	"anonymous": false,
+	"inputs": [{
+		"indexed": false,
+		"internalType": "address",
+		"name": "to",
+		"type": "address"
+	}, {
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "amount",
+		"type": "uint256"
+	}],
+	"name": "DoneWithdraw",
+	"type": "event"
+}, {
+	"anonymous": false,
+	"inputs": [{
+		"indexed": true,
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}, {
+		"indexed": true,
+		"internalType": "bytes32",
+		"name": "previousAdminRole",
+		"type": "bytes32"
+	}, {
+		"indexed": true,
+		"internalType": "bytes32",
+		"name": "newAdminRole",
+		"type": "bytes32"
+	}],
+	"name": "RoleAdminChanged",
+	"type": "event"
+}, {
+	"anonymous": false,
+	"inputs": [{
+		"indexed": true,
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}, {
+		"indexed": true,
+		"internalType": "address",
+		"name": "account",
 		"type": "address"
 	}, {
 		"indexed": true,
 		"internalType": "address",
-		"name": "newOwner",
+		"name": "sender",
 		"type": "address"
 	}],
-	"name": "OwnershipTransferred",
+	"name": "RoleGranted",
+	"type": "event"
+}, {
+	"anonymous": false,
+	"inputs": [{
+		"indexed": true,
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}, {
+		"indexed": true,
+		"internalType": "address",
+		"name": "account",
+		"type": "address"
+	}, {
+		"indexed": true,
+		"internalType": "address",
+		"name": "sender",
+		"type": "address"
+	}],
+	"name": "RoleRevoked",
 	"type": "event"
 }, {
 	"anonymous": false,
 	"inputs": [{
 		"indexed": true,
 		"internalType": "address",
-		"name": "from",
+		"name": "implementation",
 		"type": "address"
-	}, {
-		"indexed": true,
-		"internalType": "address",
-		"name": "to",
-		"type": "address"
-	}, {
-		"indexed": true,
-		"internalType": "uint256",
-		"name": "tokenId",
-		"type": "uint256"
 	}],
-	"name": "Transfer",
+	"name": "Upgraded",
 	"type": "event"
 }, {
+	"inputs": [],
+	"name": "DEFAULT_ADMIN_ROLE",
+	"outputs": [{
+		"internalType": "bytes32",
+		"name": "",
+		"type": "bytes32"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "EXADMIN_ROLE",
+	"outputs": [{
+		"internalType": "bytes32",
+		"name": "",
+		"type": "bytes32"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "UPGRADER_ROLE",
+	"outputs": [{
+		"internalType": "bytes32",
+		"name": "",
+		"type": "bytes32"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "WITHDRAW_ROLE",
+	"outputs": [{
+		"internalType": "bytes32",
+		"name": "",
+		"type": "bytes32"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
 	"inputs": [{
-		"internalType": "address",
-		"name": "to",
-		"type": "address"
-	}, {
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
 	}],
-	"name": "approve",
+	"name": "buy",
+	"outputs": [],
+	"stateMutability": "payable",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "getMaxDuration",
+	"outputs": [{
+		"internalType": "uint256",
+		"name": "duration",
+		"type": "uint256"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "getMinDuration",
+	"outputs": [{
+		"internalType": "uint256",
+		"name": "duration",
+		"type": "uint256"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "getNftCode",
+	"outputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "uint256",
+		"name": "tokenId",
+		"type": "uint256"
+	}],
+	"name": "getOffShelfTime",
+	"outputs": [{
+		"internalType": "uint256",
+		"name": "offShelfTime",
+		"type": "uint256"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "uint256",
+		"name": "tokenId",
+		"type": "uint256"
+	}],
+	"name": "getPrices",
+	"outputs": [{
+		"internalType": "uint256",
+		"name": "price",
+		"type": "uint256"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}],
+	"name": "getRoleAdmin",
+	"outputs": [{
+		"internalType": "bytes32",
+		"name": "",
+		"type": "bytes32"
+	}],
+	"stateMutability": "view",
+	"type": "function"
+}, {
+	"inputs": [],
+	"name": "getVersion",
+	"outputs": [{
+		"internalType": "uint256",
+		"name": "version",
+		"type": "uint256"
+	}],
+	"stateMutability": "pure",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}, {
+		"internalType": "address",
+		"name": "account",
+		"type": "address"
+	}],
+	"name": "grantRole",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
 }, {
 	"inputs": [{
-		"internalType": "address",
-		"name": "owner",
-		"type": "address"
-	}],
-	"name": "balanceOf",
-	"outputs": [{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}],
-	"stateMutability": "view",
-	"type": "function"
-}, {
-	"inputs": [{
-		"internalType": "uint256",
-		"name": "tokenId",
-		"type": "uint256"
-	}],
-	"name": "getApproved",
-	"outputs": [{
-		"internalType": "address",
-		"name": "",
-		"type": "address"
-	}],
-	"stateMutability": "view",
-	"type": "function"
-}, {
-	"inputs": [{
-		"internalType": "address",
-		"name": "owner",
-		"type": "address"
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
 	}, {
 		"internalType": "address",
-		"name": "operator",
+		"name": "account",
 		"type": "address"
 	}],
-	"name": "isApprovedForAll",
+	"name": "hasRole",
 	"outputs": [{
 		"internalType": "bool",
 		"name": "",
@@ -138,110 +323,106 @@ module.exports = [{
 	"stateMutability": "view",
 	"type": "function"
 }, {
+	"inputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}, {
+		"internalType": "uint256",
+		"name": "minDuration",
+		"type": "uint256"
+	}, {
+		"internalType": "uint256",
+		"name": "maxDuration",
+		"type": "uint256"
+	}],
+	"name": "initialize",
+	"outputs": [],
+	"stateMutability": "nonpayable",
+	"type": "function"
+}, {
 	"inputs": [],
-	"name": "name",
+	"name": "proxiableUUID",
 	"outputs": [{
-		"internalType": "string",
+		"internalType": "bytes32",
 		"name": "",
-		"type": "string"
+		"type": "bytes32"
 	}],
 	"stateMutability": "view",
 	"type": "function"
 }, {
-	"inputs": [],
-	"name": "owner",
-	"outputs": [{
+	"inputs": [{
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}, {
 		"internalType": "address",
-		"name": "",
+		"name": "account",
 		"type": "address"
 	}],
-	"stateMutability": "view",
+	"name": "renounceRole",
+	"outputs": [],
+	"stateMutability": "nonpayable",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "bytes32",
+		"name": "role",
+		"type": "bytes32"
+	}, {
+		"internalType": "address",
+		"name": "account",
+		"type": "address"
+	}],
+	"name": "revokeRole",
+	"outputs": [],
+	"stateMutability": "nonpayable",
 	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
-	}],
-	"name": "ownerOf",
-	"outputs": [{
-		"internalType": "address",
-		"name": "",
-		"type": "address"
-	}],
-	"stateMutability": "view",
-	"type": "function"
-}, {
-	"inputs": [],
-	"name": "renounceOwnership",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-}, {
-	"inputs": [{
-		"internalType": "address",
-		"name": "to",
-		"type": "address"
 	}, {
 		"internalType": "uint256",
-		"name": "tokenId",
+		"name": "price",
 		"type": "uint256"
-	}],
-	"name": "safeMint",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-}, {
-	"inputs": [{
-		"internalType": "address",
-		"name": "from",
-		"type": "address"
-	}, {
-		"internalType": "address",
-		"name": "to",
-		"type": "address"
 	}, {
 		"internalType": "uint256",
-		"name": "tokenId",
+		"name": "offShelfTime",
 		"type": "uint256"
 	}],
-	"name": "safeTransferFrom",
+	"name": "sell",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
 }, {
 	"inputs": [{
-		"internalType": "address",
-		"name": "from",
-		"type": "address"
-	}, {
-		"internalType": "address",
-		"name": "to",
-		"type": "address"
-	}, {
 		"internalType": "uint256",
-		"name": "tokenId",
+		"name": "duration",
 		"type": "uint256"
-	}, {
-		"internalType": "bytes",
-		"name": "_data",
-		"type": "bytes"
 	}],
-	"name": "safeTransferFrom",
+	"name": "setMaxDuration",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
 }, {
 	"inputs": [{
-		"internalType": "address",
-		"name": "operator",
-		"type": "address"
-	}, {
-		"internalType": "bool",
-		"name": "approved",
-		"type": "bool"
+		"internalType": "uint256",
+		"name": "duration",
+		"type": "uint256"
 	}],
-	"name": "setApprovalForAll",
+	"name": "setMinDuration",
+	"outputs": [],
+	"stateMutability": "nonpayable",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}],
+	"name": "setNftCode",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -260,54 +441,40 @@ module.exports = [{
 	"stateMutability": "view",
 	"type": "function"
 }, {
-	"inputs": [],
-	"name": "symbol",
-	"outputs": [{
-		"internalType": "string",
-		"name": "",
-		"type": "string"
-	}],
-	"stateMutability": "view",
-	"type": "function"
-}, {
-	"inputs": [{
-		"internalType": "uint256",
-		"name": "tokenId",
-		"type": "uint256"
-	}],
-	"name": "tokenURI",
-	"outputs": [{
-		"internalType": "string",
-		"name": "",
-		"type": "string"
-	}],
-	"stateMutability": "view",
-	"type": "function"
-}, {
 	"inputs": [{
 		"internalType": "address",
-		"name": "from",
+		"name": "newImplementation",
 		"type": "address"
-	}, {
-		"internalType": "address",
-		"name": "to",
-		"type": "address"
-	}, {
-		"internalType": "uint256",
-		"name": "tokenId",
-		"type": "uint256"
 	}],
-	"name": "transferFrom",
+	"name": "upgradeTo",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
 }, {
 	"inputs": [{
 		"internalType": "address",
-		"name": "newOwner",
+		"name": "newImplementation",
 		"type": "address"
+	}, {
+		"internalType": "bytes",
+		"name": "data",
+		"type": "bytes"
 	}],
-	"name": "transferOwnership",
+	"name": "upgradeToAndCall",
+	"outputs": [],
+	"stateMutability": "payable",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "address",
+		"name": "to",
+		"type": "address"
+	}, {
+		"internalType": "uint256",
+		"name": "amount",
+		"type": "uint256"
+	}],
+	"name": "withdraw",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"

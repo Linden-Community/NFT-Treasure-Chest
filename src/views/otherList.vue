@@ -21,25 +21,27 @@
 				<div>No items to display</div>
 			</div>
 			<div class="onebox" v-else>
-				<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
-					<div class="oneboxl"><img src="https://cdn.jsdelivr.net/npm/@vant/assets/cat.jpeg">
+				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
+					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
+						<div class="oneboxl"><img src="https://cdn.jsdelivr.net/npm/@vant/assets/cat.jpeg">
+						</div>
+						<div class="oneboxr">
+							<div class="oneboxrt">
+								<span class="oneboxrtl">{{item.name}}</span>
+								<span class="oneboxrtl">#{{item.tokenId}}</span>
+								<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+							</div>
+							<div class="oneboxrc">
+								<img src="../assets/images/icon1.png" />
+								{{item.price==null?'0':item.price}}
+							</div>
+							<div class="oneboxrb">
+								<span class="oneboxrbl">Purchase time</span>
+								<span class="oneboxrbr">{{item.offSheftTime}}</span>
+							</div>
+						</div>
 					</div>
-					<div class="oneboxr">
-						<div class="oneboxrt">
-							<span class="oneboxrtl">{{item.name}}</span>
-							<span class="oneboxrtl">#{{item.tokenId}}</span>
-							<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
-						</div>
-						<div class="oneboxrc">
-							<img src="../assets/images/icon1.png" />
-							{{item.price}}
-						</div>
-						<div class="oneboxrb">
-							<span class="oneboxrbl">Purchase time</span>
-							<span class="oneboxrbr">{{item.offSheftTime}}</span>
-						</div>
-					</div>
-				</div>
+				</van-list>
 			</div>
 		</div>
 	</div>
@@ -60,25 +62,44 @@
 		data() {
 			return {
 				sellList: [],
-				myAddress: ''
+				myAddress: '',
+				page: 1,
+				num: 10,
+				loading: false,
+				finished: false,
+				finishedText: '',
 			}
 		},
 		mounted() {
 			this.myAddress = this.$route.query.address
-			this.listRequest(3, this.$route.query.address)
+			this.listRequest(this.$route.query.address)
 		},
 		methods: {
-			listRequest(listtype, address) {
+			onMore() {
+				this.page++
+				this.listRequest(this.myAddress)
+			},
+			listRequest(address) {
 				const params = {
-					pageNo: 1,
-					pageSize: 10,
+					pageNo: this.page,
+					pageSize: this.num,
 					owner: address,
-					type: listtype,
+					type: 1,
 				}
 				listSell(params).then(res => {
 					console.log("数据", res)
-					if (res.code == '200') {
-						this.sellList = res.result.list
+					if (res.code == '200') {						
+						if (this.page == 1) {
+							this.sellList = res.result.list
+						} else {
+							this.sellList = this.sellList.concat(res.result.list)
+						}
+						this.loading = false
+						if (res.result.list.length == 0 || res.result.list.length < 10) {
+							this.finished = true
+							this.finishedText = '没有更多了...'
+							return
+						}	
 					} else {
 						this.$toast(res.message)
 					}

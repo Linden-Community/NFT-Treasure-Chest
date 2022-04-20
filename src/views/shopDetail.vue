@@ -77,7 +77,7 @@
 </template>
 <script>
 	import Vue from 'vue'
-	import AbiNft from '../json/AbiNft.js'
+	import Abi from '../json/Abi.js'
 	import {
 		Collapse,
 		CollapseItem,
@@ -141,9 +141,9 @@
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//合约地址
-							const addressNFT = "0x250019C9E3EB59Ef6eFAB410408F6c8E246f5A24"
-							const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
-							myContractNft.methods.getOffShelfTime(this.detaillist.tokenId).call().then(
+							const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
+							const myContract = new web3.eth.Contract(Abi, address)
+							myContract.methods.getOffShelfTime(this.detaillist.tokenId).call().then(
 							timesTamp => {
 								//获取当前时间戳单位毫秒
 								var dataTime = new Date().getTime()
@@ -152,12 +152,12 @@
 								if (timesTamp * 1000 - dataTime > 0) {
 									//商品未下架获取商品价格
 									//NFT上架价格
-									myContractNft.methods.getPrices(this.detaillist.tokenId).call().then(
+									myContract.methods.getPrices(this.detaillist.tokenId).call().then(
 										prices => {
 											console.log('from prices :' + prices)
 										})
 									//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
-									myContractNft.methods.buy(this.detaillist.tokenId).send({
+									myContract.methods.buy(this.detaillist.tokenId).send({
 										from: res[0],
 										value: web3.utils.toWei("0.02", 'ether') //动态获取商品价格
 									}).then(res => {

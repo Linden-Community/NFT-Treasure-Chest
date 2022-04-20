@@ -7,14 +7,15 @@
 			<span class="spanthree">Maximum supported: 10MB</span>
 			<div class="divone">
 				<van-uploader v-model="fileList" multiple :max-count="1" :max-size="10240 * 1024"
-					:before-read="beforeRead" :after-read="afterRead" />
+					:before-read="beforeRead" :before-delete="delImg" />
 			</div>
 		</div>
 		<div class="contenttwo">
 			<div class="contenttwoo">
 				<span>Work title</span><span>*</span>
 				<div>
-					<van-field v-model="title" center clearable label="" placeholder="Please enter work title">
+					<van-field v-model="title" center clearable label="" placeholder="Please enter work title"
+						maxlength="50">
 					</van-field>
 				</div>
 			</div>
@@ -22,7 +23,7 @@
 				<span>Description of the work</span>
 				<div>
 					<van-cell-group inset>
-						<van-field v-model="description" rows="2" autosize type="textarea" maxlength="50"
+						<van-field v-model="description" rows="2" autosize type="textarea" maxlength="100"
 							placeholder="Please enter a description of the work" show-word-limit />
 					</van-cell-group>
 				</div>
@@ -49,7 +50,7 @@
 	import {
 		setCoin
 	} from "../api";
-
+	import AbiNft from '../json/AbiNft.js'
 	export default {
 		components: {
 			footBar
@@ -60,36 +61,44 @@
 				title: '',
 				fileList: [],
 				tokenId: '',
-				imageData:'',
+				imageData: '',
 			}
 		},
 		mounted() {
 
 		},
 		methods: {
-			afterRead(file) {
-				console.log(file.content)
-				let FormDatas = new FormData();
-				FormDatas.append('file', file.content)
-				this.$http({
-					url: 'https://csg.lindensys.cn/poss/v1/testnet/add',
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-					method: 'post',
-					data: FormDatas,
-				}).then(res => {
-					console.log(res.data.Hash,1,1,)
-					this.imageData = 'https://csg.lindensys.cn/poss/v1/testnet/ipfs'+res.data.Hash
-				})
+			// afterRead(file) {
+				
+			// },
+			
+			delImg (file, detail) {
+				console.log(this.fileList[0],this.imageData,111,detail.index)
+				this.fileList.splice(detail.index,1)	
+				this.imageData = ''
+				console.log(this.fileList[0],this.imageData,222)
 			},
 			beforeRead(file) {
 				if (file.type != 'image/png') {
 					this.$toast('请上传JPG,PNG格式图片')
 				} else {
+					let FormDatas = new FormData();
+					FormDatas.append('file', file.content)
+					this.$http({
+						url: 'https://csg.lindensys.cn/poss/v1/testnet/add',
+						headers: {
+							'Content-Type': 'multipart/form-data',
+						},
+						method: 'post',
+						data: FormDatas,
+					}).then(res => {
+						console.log(res.data.Hash, 1, 1, )
+						this.imageData = 'https://csg.lindensys.cn/poss/v1/testnet/ipfs/' + res.data.Hash
+					})
 					return true
 				}
 			},
+			//获取19位tokenid
 			getCurrentTime() {
 				let yy = new Date().getFullYear();
 				let mm = new Date().getMonth() + 1 < 10 ? "0" + `${new Date().getMonth() + 1}` : new Date().getMonth() + 1;
@@ -100,31 +109,65 @@
 				this.tokenId = `${yy}${mm}${dd}` + hh + mf + ss;
 				var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 				var num = '';
-				for (var i = 0; i < 6; i++) {
+				for (var i = 0; i < 5; i++) {
 					num += Math.floor(Math.random() * 10);
 				}
-				console.log(this.tokenId + num, 111, yy, mm, dd, hh, mf, ss)
+				this.tokenId = this.tokenId + num
 			},
 			mintBtn() {
+				console.log(this.imageData, 2222)
 				this.getCurrentTime()
-				const params = {
-					tokenId: this.tokenId, //年月日时分秒+6位随机数
-					imageData: this.imageData,
-					nftId:'babaofan',
-					name: this.title,
-					description: this.description,
-					//后期需要
-					// nftId // image// externalUrl	// attributes// backgroundColor	 // animationUrl // youtubeUrl // createTime/ updateTime
-				}
-				setCoin(params).then(res => {
-					if (res.code == "200") {
-						console.log("数据", res)
-					} else {
-						this.$toast(res.message)
+				if (this.title == '') {
+					this.$toast('Please enter the title')
+				} else if (this.imageData == '') {
+					this.$toast('Please enter the image')
+				} else {
+					const params = {
+						tokenId: this.tokenId, //年月日时分秒+5位随机数
+						image: this.imageData,
+						nftId: 'babaofan',
+						name: this.title,
+						description: this.description,
+						//后期需要
+						// nftId // image// externalUrl	// attributes// backgroundColor	 // animationUrl // youtubeUrl // createTime/ updateTime
 					}
-				})
+					setCoin(params).then(res => {
+						if (res.code == "200") {
+							this.safeMint(res.result.cid)
+						} else {
+							this.$toast(res.message)
+						}
+					})
+				}
 			},
-		},
+			safeMint(uri) {
+				const web3 = new this.Web3(window.web3.currentProvider)
+				//合约地址
+				const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
+				const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
+				myContractNft.methods.safeMint(sessionStorage.getItem("myAddress"), this.tokenId, uri)
+					.send({
+						from: sessionStorage.getItem("myAddress")
+					}).then(res => {
+						if (JSON.stringify(res.status) == 'true') {
+							this.$toast('success')
+							console.log("success")
+							location.reload()
+						} else {
+							this.$toast(res.message)
+							console.log(res.message)
+						}
+					}).catch((error) => {
+						if (JSON.stringify(error.status) == 'true') {
+							this.$toast(error.message)
+							console.log(error.message)
+						} else {
+							this.$toast('error')
+							console.log("error")
+						}
+					})
+			},
+		}
 	}
 </script>
 <style scoped>

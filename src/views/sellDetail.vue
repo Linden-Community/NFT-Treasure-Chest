@@ -217,14 +217,14 @@
 								this.$toast('请先登录小狐狸')
 							} else {
 								const web3 = new this.Web3(window.web3.currentProvider)
-								//交易所合约地址
-								const address = "0x0cd43FFF2a992E094E829B4b826fC67aBAe2D6E3"
 								//NFT合约地址
-								const addressNFT = "0x250019C9E3EB59Ef6eFAB410408F6c8E246f5A24"
-								const myContract = new web3.eth.Contract(Abi, address)
-								const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
+								const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
+								const myContractNft= new web3.eth.Contract(AbiNft, address)
+								//交易所合约地址
+								const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
+								const myContract = new web3.eth.Contract(Abi, addressNFT)
 								//授权nft
-								myContract.methods.approve(addressNFT, "107")
+								myContractNft.methods.approve(addressNFT, "107")
 									.send({
 										from: res[0]
 									}).then(res => {
@@ -233,7 +233,7 @@
 										console.log("授权error--->" + error.code, error.message)
 									})
 								//上架NFT商品（商品id 金额 时间）
-								myContractNft.methods.sell("107", web3.utils.toWei(BigNumber(this.amount), 'ether'),
+								myContract.methods.sell("107", web3.utils.toWei(BigNumber(this.amount), 'ether'),
 										BigNumber(this.mytime))
 									.send({
 										from: res[0]

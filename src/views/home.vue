@@ -226,49 +226,6 @@
 					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
 				}
 			},
-			//获取账号余额
-			getBalance(address) {
-				window.ethereum.request({
-						method: 'eth_getBalance',
-						params: [
-							address,
-							'latest'
-						]
-					})
-					.then((result) => {
-						console.log("获取余额success--->" + result)
-						console.log(result)
-						if (result < 0) {
-							this.$toast('账户余额不足请先充值')
-						} else {
-							this.send()
-						}
-					})
-					.catch((error) => {
-						console.log("获取余额error--->" + error.code)
-					});
-			},
-			//调用平台智能合约
-			send() {
-				let params = [{
-					"from": "0x38e6ed533127698b7df183caae070cdde602a5e3",
-					"to": "0x38e6ed533127698B7df183caAE070cDdE602A5E3",
-					"gas": "100", // 30400
-					"gasPrice": "1", // 30400
-					"value": "1", // 30400
-					"data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
-				}]
-				window.ethereum.sendAsync({
-					method: 'eth_sendTransaction',
-					params: params,
-					from: "0x38e6ed533127698b7df183caae070cdde602a5e3", // Provide the user's account to use.
-				}, function(err, result) {
-					console.log(err, result)
-					// A typical node-style, error-first callback.
-					// The result varies by method, per the JSON RPC API.
-					// For example, this method will return a transaction hash on success.
-				})
-			},
 			//商品描述
 			des() {
 				//var api ='http://dweb.lindensys.cn/ipns/k51qzi5uqu5divqrok0get110odatax0tv8uqh3forzp1zhoxy7ft7cua188gt/babaofan/110'
