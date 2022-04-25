@@ -16,7 +16,7 @@
 			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
 				<div class="content-boxleft" v-for="(item,index) in shoplist" :key='index' @click="godetail(item)">
 					<!-- item.image -->
-					<img v-if="item.image==null" class="boximg" src="../assets/images/nolist.png" />
+					<img v-if="item.image==null" class="boximg" src="../assets/images/zw.png" />
 					<img v-else class="boximg" :src="item.image" />
 					<div class="boxleft">
 						<span class="boxleftonel">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>

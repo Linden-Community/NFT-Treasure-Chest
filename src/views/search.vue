@@ -12,15 +12,18 @@
 		<div v-else class="onebox">
 			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
 			<div class="oneboxcell" v-for="(item,index) in searchlist" :key='index' :title="item">
-				<div class="oneboxl"><img src="https://cdn.jsdelivr.net/npm/@vant/assets/cat.jpeg"></div>
+				<div class="oneboxl">
+					<img v-if="item.image==null" src="../assets/images/nolist.png">
+					<img v-else :src="item.image">
+				</div>
 				<div class="oneboxr">
 					<div class="oneboxrt">
 						<span class="oneboxrtl">{{item.name}}</span>
-						<span class="oneboxrtl">#{{item.tokenId}}</span>
+						<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
 						<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 					</div>
 					<div class="oneboxrc">
-						<img src="../assets/images/icon1.png" />
+						<img v-show="item.price!=null" src="../assets/images/icon1.png" />
 						{{item.price}}
 					</div>
 					<div class="oneboxrb">

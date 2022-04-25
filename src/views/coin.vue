@@ -3,7 +3,7 @@
 		<van-nav-bar title="Mint quantity" />
 		<div class="contentone">
 			<span class="spanone">Upload work<span>*</span></span>
-			<span class="spantwo">Supported formats: JPG、PNG</span>
+			<!-- <span class="spantwo">Supported formats: JPG、PNG</span> -->
 			<span class="spanthree">Maximum supported: 10MB</span>
 			<div class="divone">
 				<van-uploader v-model="fileList" multiple :max-count="1" :max-size="10240 * 1024"
@@ -34,6 +34,7 @@
 				<div class="mint" @click="mintBtn">Mint</div>
 			</div>
 		</div>
+		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
 		<foot-bar v-if="$route.meta.isMenu"></foot-bar>
 	</div>
 </template>
@@ -44,9 +45,10 @@
 		Uploader,
 		Field,
 		CellGroup,
-		NavBar
+		NavBar,
+		Loading
 	} from 'vant'
-	Vue.use(Uploader).use(Field).use(CellGroup).use(NavBar)
+	Vue.use(Uploader).use(Field).use(CellGroup).use(NavBar).use(Loading)
 	import {
 		setCoin
 	} from "../api";
@@ -62,6 +64,7 @@
 				fileList: [],
 				tokenId: '',
 				imageData: '',
+				pageLoading:false,
 			}
 		},
 		mounted() {
@@ -69,34 +72,28 @@
 		},
 		methods: {
 			// afterRead(file) {
-				
 			// },
-			
-			delImg (file, detail) {
-				console.log(this.fileList[0],this.imageData,111,detail.index)
-				this.fileList.splice(detail.index,1)	
+			delImg(file, detail) {
+				console.log(this.fileList[0], this.imageData, 111, detail.index)
+				this.fileList.splice(detail.index, 1)
 				this.imageData = ''
-				console.log(this.fileList[0],this.imageData,222)
+				console.log(this.fileList[0], this.imageData, 222)
 			},
 			beforeRead(file) {
-				if (file.type != 'image/png') {
-					this.$toast('请上传JPG,PNG格式图片')
-				} else {
-					let FormDatas = new FormData();
-					FormDatas.append('file', file.content)
-					this.$http({
-						url: 'https://csg.lindensys.cn/poss/v1/testnet/add',
-						headers: {
-							'Content-Type': 'multipart/form-data',
-						},
-						method: 'post',
-						data: FormDatas,
-					}).then(res => {
-						console.log(res.data.Hash, 1, 1, )
-						this.imageData = 'https://csg.lindensys.cn/poss/v1/testnet/ipfs/' + res.data.Hash
-					})
-					return true
-				}
+				let FormDatas = new FormData()
+				FormDatas.append('file', file)
+				this.$http({
+					url: 'https://csg.lindensys.cn/poss/v1/testnet/add',
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+					method: 'post',
+					data: FormDatas,
+				}).then(res => {
+					console.log(res.data.Hash)
+					this.imageData = 'https://csg.lindensys.cn/poss/v1/testnet/ipfs/' + res.data.Hash
+				})
+				return true
 			},
 			//获取19位tokenid
 			getCurrentTime() {
@@ -129,7 +126,7 @@
 						name: this.title,
 						description: this.description,
 						//后期需要
-						// nftId // image// externalUrl	// attributes// backgroundColor	 // animationUrl // youtubeUrl // createTime/ updateTime
+						//nftId // image// externalUrl	// attributes// backgroundColor	 // animationUrl // youtubeUrl // createTime/ updateTime
 					}
 					setCoin(params).then(res => {
 						if (res.code == "200") {
@@ -145,26 +142,33 @@
 				//合约地址
 				const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
 				const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
+				this.pageLoading = true
 				myContractNft.methods.safeMint(sessionStorage.getItem("myAddress"), this.tokenId, uri)
 					.send({
 						from: sessionStorage.getItem("myAddress")
 					}).then(res => {
 						if (JSON.stringify(res.status) == 'true') {
-							this.$toast('success')
+							this.$toast('Successful coinage')
 							console.log("success")
-							location.reload()
+							//刷新
+							//location.reload()
+							this.pageLoading = false
+							//跳转
+							this.$router.push('me') 
 						} else {
 							this.$toast(res.message)
 							console.log(res.message)
 						}
 					}).catch((error) => {
-						if (JSON.stringify(error.status) == 'true') {
-							this.$toast(error.message)
-							console.log(error.message)
-						} else {
-							this.$toast('error')
-							console.log("error")
-						}
+						this.pageLoading = false
+						this.$toast(error.message)
+						// if (JSON.stringify(error.status) == 'true') {
+						// 	this.$toast(error.message)
+						// 	console.log(error.message)
+						// } else {
+						// 	this.$toast(error.message)
+						// 	console.log(error.message)
+						// }
 					})
 			},
 		}
@@ -275,7 +279,12 @@
 		font-weight: 400;
 		float: right;
 	}
-
+	.loadingbox{
+		width: 100%;
+		position: fixed;
+		top:50%;
+		text-align: center;
+	}
 	.mint {
 		width: 170px;
 		height: 44px;

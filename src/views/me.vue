@@ -34,8 +34,8 @@
 								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 									@click="gotosell(item)">
 									<div class="oneboxl">
-										<img v-if="item.image==null" src="../assets/images/nolist.png">
-										<img v-else src="item.image">
+										<img v-if="item.image==null" src="../assets/images/zw.png">
+										<img v-else :src="item.image">
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
@@ -52,9 +52,9 @@
 								</div>
 							</div>
 							<div v-else-if="index==1" class="onebox">
-								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
+								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 									<div class="oneboxl">
-										<img v-if="item.image==null" src="../assets/images/nolist.png">
+										<img v-if="item.image==null" src="../assets/images/zw.png">
 										<img v-else :src="item.image">
 									</div>
 									<div class="oneboxr">
@@ -76,9 +76,9 @@
 								</div>
 							</div>
 							<div v-else-if="index==2" class="onebox">
-								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
+								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 									<div class="oneboxl">
-										<img v-if="item.image==null" src="../assets/images/nolist.png">
+										<img v-if="item.image==null" src="../assets/images/zw.png">
 										<img v-else :src="item.image">
 									</div>
 									<div class="oneboxr">

@@ -10,7 +10,7 @@
 								src="../assets/images/icon1.png"></span>
 						<span class="userInfoboxrbc">{{myAddress}}</span>
 						<span class="userInfoboxrbr"><img
-								src="../assets/images/copy.png"></span>
+								src="../assets/images/copy.png" @click="copyClick(myAddress)"></span>
 					</div>
 				</div>
 			</div>
@@ -23,16 +23,18 @@
 			<div class="onebox" v-else>
 				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
 					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
-						<div class="oneboxl"><img src="https://cdn.jsdelivr.net/npm/@vant/assets/cat.jpeg">
+						<div class="oneboxl">
+							<img v-if="item.image==null" src="../assets/images/zw.png">
+							<img v-else :src="item.image">
 						</div>
 						<div class="oneboxr">
 							<div class="oneboxrt">
 								<span class="oneboxrtl">{{item.name}}</span>
-								<span class="oneboxrtl">#{{item.tokenId}}</span>
+								<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
 								<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 							</div>
 							<div class="oneboxrc">
-								<img src="../assets/images/icon1.png" />
+								<img v-show="item.price!=null" src="../assets/images/icon1.png" />
 								{{item.price==null?'0':item.price}}
 							</div>
 							<div class="oneboxrb">
@@ -75,6 +77,13 @@
 			this.listRequest(this.$route.query.address)
 		},
 		methods: {
+			copyClick(txt) {
+				this.$copyText(txt).then(() => {
+					this.$toast('已成功复制到剪切板')
+				}).catch(() => {
+					this.$toast('复制失败')
+				})
+			},
 			onMore() {
 				this.page++
 				this.listRequest(this.myAddress)

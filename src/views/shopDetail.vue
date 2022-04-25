@@ -10,7 +10,7 @@
 			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span><span
 					class="twocellr">#{{detaillist.tokenId}}</span></div>
 			<div class="threecell">
-				<img v-if="detaillist.image==null" src="../assets/images/nolist.png" />
+				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
 				<img v-else :src="detaillist.image" />
 			</div>
 			<div class="fourcell">
@@ -28,7 +28,7 @@
 				<div class="contenttwotl">
 					<span><img src="../assets/images/icon1.png"></span>
 					<span class="spantwo">{{detaillist.price}}</span>
-					<span class="spanthree">（$10,100.16）</span>
+					<span class="spanthree">{{`（$${detaillist.uprice}）`}}</span>
 				</div>
 				<div class="contenttwotr" @click="buyClick">Buy now</div>
 			</div>
@@ -73,11 +73,13 @@
 				</van-collapse>
 			</div>
 		</div>
+	<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
 	</div>
 </template>
 <script>
 	import Vue from 'vue'
 	import Abi from '../json/Abi.js'
+	import BigNumber from "bignumber.js";
 	import {
 		Collapse,
 		CollapseItem,
@@ -85,9 +87,10 @@
 		Col,
 		Row,
 		NavBar,
-		List
+		List,
+		Loading
 	} from 'vant'
-	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Col).use(Row).use(NavBar).use(List)
+	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Col).use(Row).use(NavBar).use(List).use(Loading)
 	import {
 		listLog,
 		getNft,
@@ -103,11 +106,11 @@
 				num: 10,
 				loading: false,
 				finished: false,
+				pageLoading:false,
 			}
 		},
 		mounted() {
 			this.detailNft(this.$route.query.userId)
-			this.loglist()
 		},
 		methods: {
 			onMore() {
@@ -156,12 +159,17 @@
 										prices => {
 											console.log('from prices :' + prices)
 										})
+									this.pageLoading = true
 									//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
-									myContract.methods.buy(this.detaillist.tokenId).send({
+									myContract.methods.buy(BigNumber(this.detaillist.tokenId)).send({
 										from: res[0],
-										value: web3.utils.toWei("0.02", 'ether') //动态获取商品价格
+										value: BigNumber(web3.utils.toWei(this.detaillist.price, 'ether'))//动态获取商品价格
 									}).then(res => {
+										this.pageLoading = false
 										console.log('from res :' + res)
+									}).catch((error) => {
+										this.pageLoading = false
+										this.$toast(error.message)
 									})
 								} else {
 									this.$toast('商品已下架')
@@ -181,17 +189,19 @@
 					if (res.code == "200") {
 						this.detaillist = res.result
 						this.copyIds = res.result.tokenId
+						this.loglist()
 					} else {
 						this.$toast(res.message)
 					}
 				})
 			},
 			loglist() {
+				console.log(this.detaillist.contract,11111)
 				const params = {
 					pageNo: this.page,
 					pageSize: this.num,
-					tokenId: "321",
-					contract: "0x250019c9e3eb59ef6efab410408f6c8e246f5a24",
+					tokenId: this.detaillist.tokenId,
+					contract: this.detaillist.contract,
 				}
 				listLog(params).then(res => {
 					if (res.code == "200") {
@@ -265,11 +275,12 @@
 	}
 
 	.threecell {
-		width: 343px;
+		width: 100%;
 	}
 
 	.threecell img {
 		width: 100%;
+		height: 300px;
 		margin: 0 auto;
 	}
 
@@ -411,5 +422,11 @@
 		text-align: center;
 		font-size: 11px;
 		color: #666666;
+	}
+	.loadingbox{
+		width: 100%;
+		position: fixed;
+		top:50%;
+		text-align: center;
 	}
 </style>

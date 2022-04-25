@@ -1,18 +1,23 @@
 <template>
 	<div class="wrap">
 		<div class="headerbox">
-		<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
+			<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
 		</div>
 		<div class="contentone">
-			<div class="onecell"><span class="onecelll">Minted by</span><span @click="gootheraddress(detaillist.creator)" class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
+			<div class="onecell"><span class="onecelll">Minted by</span><span
+					@click="gootheraddress(detaillist.creator)"
+					class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
 			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span><span
 					class="twocellr">#{{detaillist.tokenId}}</span></div>
-			<div class="threecell"><img :src="detaillist.image" /></div>
+			<div class="threecell">
+				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
+				<img v-else :src="detaillist.image" />
+			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
 					<span class="fourcellone">Owned by</span>
-					<span
-						class="fourcelltwo" @click="gootheraddress(detaillist.owner)">{{detaillist.owner==null?'detaillistowner':detaillist.owner | ellipsis }}</span>
+					<span class="fourcelltwo"
+						@click="gootheraddress(detaillist.owner)">{{detaillist.owner==null?'detaillistowner':detaillist.owner | ellipsis }}</span>
 				</div>
 				<div class="fourcellr">{{detaillist.offSheftTime}}</div>
 			</div>
@@ -23,7 +28,7 @@
 					<div class="contenttwooot"><span class="contenttwoooto">Current Price</span><span
 							class="contenttwooott">Fixed price</span></div>
 					<div class="contenttwooob">
-						<van-field v-model="amount" type="number" placeholder="Please enter the amount" />
+						<van-field v-model="amount" type="number" placeholder="Please enter the amount" @change="inputchange"/>
 						<span class="coinCompany">BNB</span>
 					</div>
 				</div>
@@ -34,24 +39,11 @@
 						<img src="../assets/images/timeicon.png" class="dateimg" @click="showdatebox" />
 					</div>
 					<div class="datatimebox" v-show="dateboxshow">
-						<van-picker title="标题" :columns="columns" :default-index="0" @change="onChange" />
-						<!-- <div class="datatimeboxt">
-							<span>Days</span>
-							<div :class="index==nowIndex?'checkedbox':'checkedboxno'" @click="checked(index,item)"
-								v-for="(item,index) in daylist" :key='index'>{{item}} Day</div>
+						<div class="datatimeboxtt">
+							<span>Select shelf cycle</span>
+							<span  @click="nochoosedate"><van-icon name="cross" /></span>	
 						</div>
-						<div class="datatimeboxb">
-							<div class="datatimeboxbo"><span>Start</span><span>End</span></div>
-							<div class="datatimeboxbt">
-								<span class="datatimeboxbtspan" @click="choosedatetime">1</span>
-								<span>——</span>
-								<span class="datatimeboxbtspan" @click="choosedatetime">1</span>
-							</div>
-							<div class="datatimeboxbe" v-show="datetimeshow">
-								<van-datetime-picker v-model="currentDate" type="date" :min-date="minDate"
-									:max-date="maxDate" />
-							</div>
-						</div> -->
+						<van-picker title="标题" :columns="columns" :default-index="0" @change="onChange" />
 						<div class="datatimeboxbf" @click="choosedatesub">Confirm</div>
 					</div>
 				</div>
@@ -69,21 +61,22 @@
 			<div class="contenttwote">
 				<van-collapse v-model="activeNames">
 					<van-collapse-item title="Details of the works" name="1" class='mycell'>
-						<!-- <van-cell title="Contract Address" :value="detaillist.contract" />
-						<van-cell title="Token ID" :value="detaillist.tokenId" /> -->
 						<van-cell title="Contract Address">
 							<template #right-icon>
-								<span class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
-								<img class="copyimg" @click="copyclick(detaillist.contract)" src="../assets/images/copy.png">
+								<span
+									class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
+								<img class="copyimg" @click="copyclick(detaillist.contract)"
+									src="../assets/images/copy.png">
 							</template>
 						</van-cell>
 						<van-cell title="Token ID">
 							<template #right-icon>
-								<span class="copyadd">{{detaillist.tokenId==null?'detaillisttokenId':detaillist.tokenId | ellipsis }}</span>
+								<span
+									class="copyadd">{{detaillist.tokenId==null?'detaillisttokenId':detaillist.tokenId | ellipsis }}</span>
 								<img class="copyimg" @click="copyclick(copyIds)" src="../assets/images/copy.png">
 							</template>
 						</van-cell>
-						
+
 						<van-cell title="Token Standard" value="ERC-721" />
 						<van-cell title="Blockchain" value="BNB" />
 					</van-collapse-item>
@@ -91,6 +84,7 @@
 			</div>
 		</div>
 		<div class="sell" @click="sellsub">sell</div>
+		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
 	</div>
 </template>
 <script>
@@ -103,14 +97,16 @@
 		CellGroup,
 		Icon,
 		Picker,
-		NavBar
+		NavBar,
+		Loading
 	} from 'vant'
-	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Field).use(CellGroup).use(Icon).use(Picker).use(NavBar)
+	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Field).use(CellGroup).use(Icon).use(Picker).use(NavBar).use(Loading)
 	import {
 		getNft
 	} from "../api";
 	import Abi from '../json/Abi.js'
 	import AbiNft from '../json/AbiNft.js'
+	import BigNumber from "bignumber.js";
 	import {
 		addDate
 	} from '../api/date.js'
@@ -121,30 +117,43 @@
 				amount: '',
 				detaillist: [],
 				tipboxshow: false,
-				//daylist: ['1', '3', '7', '30', '50', '180', ],
-				//currentDate: true,
 				minDate: new Date(2010, 0, 1),
 				maxDate: new Date(2010, 0, 31),
 				columns: [],
-				//nowIndex: 0,
-				//datetimeshow: false,//日期组件
 				dateboxshow: false, //日期弹框快捷方式
 				mydate: '1',
 				mychangedate: '',
 				shopid: '',
-				mytime: '',
-				copyIds:'',
+				mytime: parseInt(new Date().getTime()/1000)+87000, //默认一天
+				copyIds: '',
+				mytokenId: '',
+				pageLoading:false,
 			}
 		},
 		mounted() {
 			this.shopid = this.$route.query.userId
-			this.detailNft(this.$route.query.userId)
-			this.putdate()
-			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(0)) + ' ( 1 Day ) '
+			this.detailNft(this.$route.query.userId) //商品详情
+			this.putdate() //获取处理时间
+			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(0)) +
+				' ( 1 Day ) ' //默认时间
+	
 		},
-		methods: {
-			gootheraddress(address){
-				console.log(address)
+		methods: {	
+			inputchange(e) {
+				var val = e.target.value
+				//先把非数字的都替换掉，除了数字和.
+				val = val.replace(/[^\d.]/g,"");
+			    //保证只有出现一个.而没有多个.
+			    val = val.replace(/\.{2,}/g,".");
+			    //必须保证第一个为数字而不是.
+			    val = val.replace(/^\./g,"");
+			    //保证.只出现一次，而不能出现两次以上
+			    val = val.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			    //只能输入两个小数
+			    val = val.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3');
+				this.amount = val
+			},
+			gootheraddress(address) {
 				this.$router.push({
 					name: 'otherList',
 					query: {
@@ -153,25 +162,17 @@
 				})
 			},
 			//复制
-			copyclick(txt){
+			copyclick(txt) {
 				this.$copyText(txt).then(() => {
 					this.$toast('已成功复制到剪切板')
 				}).catch(() => {
 					this.$toast('复制失败')
 				})
 			},
-			// checked(index,item) {
-			// 	this.nowIndex = index
-			// 	this.mydate = item
-			// },
 			//大弹框
 			showdatebox() {
 				this.dateboxshow = !this.dateboxshow
 			},
-			//时间弹框
-			// choosedatetime() {
-			// 	this.datetimeshow = true
-			// },
 			icontip() {
 				this.tipboxshow = !this.tipboxshow
 			},
@@ -185,8 +186,11 @@
 			onChange(value, index) {
 				this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + index.split(' ')[4] + ' (' + index.split(' ')[
 					0] + index.split(' ')[1] + ')'
-				this.mytime = index.split(' ')[0] * 24 * 60 * 60
+				this.mytime = parseInt(new Date().getTime()/1000) + index.split(' ')[0] * 24 * 60 * 60+600
 				console.log(`当前值: ${value}, 当前索引: ${index}`, this.mytime);
+			},
+			nochoosedate(){
+				this.dateboxshow = false
 			},
 			//时间选择按钮
 			choosedatesub() {
@@ -201,15 +205,56 @@
 					if (res.code == "200") {
 						this.detaillist = res.result
 						this.copyIds = res.result.tokenId
+						this.empower()
 					} else {
 						this.$toast(res.message)
 					}
 				})
 			},
+			//授权
+			empower() {
+				if (window.ethereum) {
+					window.ethereum.enable().then((res) => {
+						if (!res[0]) {
+							this.$toast('请先登录小狐狸')
+						} else {
+							const web3 = new this.Web3(window.web3.currentProvider)
+							//NFT合约地址
+							const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
+							const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
+							//授权nft
+							this.mytokenId = BigNumber(this.detaillist.tokenId)
+							this.pageLoading = true
+							myContractNft.methods.approve(addressNFT, this.mytokenId)
+								.send({
+									from: res[0]
+								}).then(res => {
+									console.log('from res :' + res)
+									if (JSON.stringify(res.status) == 'true') {
+										this.$toast('Authorization succeeded')
+										console.log("success")
+										//刷新页面
+										//location.reload()
+										this.pageLoading = false
+									} else {
+										this.$toast(res.message)
+										console.log(res.message)
+									}
+								}).catch((error) => {
+									this.pageLoading = false
+									this.$toast(error.message)
+									console.log("授权error--->" + error.code, error.message)
+								})
+						}
+					})
+				} else {
+					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
+				}
+			},
 			//上架
 			sellsub() {
 				if (this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
-					this.$toast('输入不正确，请重新输入')
+					this.$toast('请输入0.0001-9999.9999之间的数字')
 				} else {
 					if (window.ethereum) {
 						window.ethereum.enable().then((res) => {
@@ -217,30 +262,32 @@
 								this.$toast('请先登录小狐狸')
 							} else {
 								const web3 = new this.Web3(window.web3.currentProvider)
-								//NFT合约地址
-								const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
-								const myContractNft= new web3.eth.Contract(AbiNft, address)
 								//交易所合约地址
 								const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
-								const myContract = new web3.eth.Contract(Abi, addressNFT)
+								const myContract = new web3.eth.Contract(Abi, address)
 								//授权nft
-								myContractNft.methods.approve(addressNFT, "107")
-									.send({
-										from: res[0]
-									}).then(res => {
-										console.log('from res :' + res)
-									}).catch((error) => {
-										console.log("授权error--->" + error.code, error.message)
-									})
+								this.mytokenId = BigNumber(this.detaillist.tokenId)
+								this.pageLoading = true
 								//上架NFT商品（商品id 金额 时间）
-								myContract.methods.sell("107", web3.utils.toWei(BigNumber(this.amount), 'ether'),
-										BigNumber(this.mytime))
+								myContract.methods.sell(this.mytokenId, BigNumber(web3.utils.toWei(this.amount,
+											'ether')),
+										this.mytime)
 									.send({
 										from: res[0]
 									}).then(res => {
 										console.log('from res :' + res)
-										this.$toast(res)
+										if (JSON.stringify(res.status) == 'true') {
+											this.$toast('Successful launch')
+											console.log("success")
+											this.pageLoading = false
+											//跳转页面
+											this.$router.push('me') 
+										} else {
+											this.$toast(res.message)
+											console.log(res.message)
+										}
 									}).catch((error) => {
+										this.pageLoading = false
 										this.$toast(error.message)
 										console.log("上架error--->" + error.code, error.message)
 									})
@@ -258,10 +305,11 @@
 	.headerbox {
 		position: fixed;
 		width: 100%;
-		top:0;
+		top: 0;
 		border-bottom: 10px solid #F7F7F7;
 	}
-.onecelll {
+
+	.onecelll {
 		height: 14px;
 		font-size: 14px;
 		font-family: SourceHanSansCN-Regular, SourceHanSansCN;
@@ -269,20 +317,22 @@
 		color: #666666;
 		line-height: 21px;
 	}
-.onecellr{
-	float:right;
-	text-align:right;
-	color: #FF5603;
-	font-size: 12px;
-	width:200px;
-}
+
+	.onecellr {
+		float: right;
+		text-align: right;
+		color: #FF5603;
+		font-size: 12px;
+		width: 200px;
+	}
+
 	.warp {
 		position: relative;
 	}
 
 	.contentone {
-		border-bottom:10px solid #F7F7F7;
-		padding:20px 16px 10px 16px;
+		border-bottom: 10px solid #F7F7F7;
+		padding: 20px 16px 10px 16px;
 		margin-top: 45px;
 	}
 
@@ -309,16 +359,17 @@
 	}
 
 	.twocellr {
-		float:right;
+		float: right;
 	}
 
 	.threecell {
-		width:343px;
+		width: 100%;
 	}
 
 	.threecell img {
-		width:100%;
-		margin:0 auto;
+		width: 100%;
+		height: 300px;
+		margin: 0 auto;
 	}
 
 	.dateimg,
@@ -342,8 +393,8 @@
 	}
 
 	.fourcell {
-		margin:0 auto;
-		height:35px;
+		margin: 0 auto;
+		height: 35px;
 		background: #FFFFFF;
 		font-size: 12px;
 		font-weight: 400;
@@ -352,8 +403,8 @@
 	}
 
 	.fourcelll {
-		width:200px;
-		display:inline-block;
+		width: 200px;
+		display: inline-block;
 	}
 
 	.fourcellone {
@@ -361,18 +412,18 @@
 	}
 
 	.fourcelltwo {
-		margin-left:5px;
+		margin-left: 5px;
 		color: #FF5603;
 	}
 
 	.fourcellr {
 		color: #999999;
 		float: right;
-		display:inline-block;
+		display: inline-block;
 	}
 
 	.contenttwo {
-		background:#FFFFFF;
+		background: #FFFFFF;
 	}
 
 	.contenttwoo {
@@ -406,20 +457,20 @@
 	}
 
 	.contenttwot {
-		height:50px;
-		line-height:50px;
-		display:lex;
+		height: 50px;
+		line-height: 50px;
+		display: lex;
 		border-bottom: 0.026667rem solid #D8D8D8;
-		padding:0px 20px;
+		padding: 0px 20px;
 	}
 
 	.contenttwote {
-		padding:0px 5px;
+		padding: 0px 5px;
 	}
 
 	.contenttwotl {
 		display: inline;
-		width:350px;
+		width: 350px;
 		font-size: 12px;
 		color: #666666;
 	}
@@ -519,83 +570,30 @@
 		border-radius: 4px;
 	}
 
-	/* // .datatimeboxt span {
-	// 	font-size: 12px;
-	// 	color: #333333;
-	// 	line-height: 18px;
-	// 	display: inline-block;
-	// 	width: 100%;
-	// }
-
-	// .datatimeboxbo {
-	// 	margin: 24px 0 20px 0;
-	// }
-
-	// .datatimeboxbo span {
-	// 	width: 130px;
-	// 	font-size: 12px;
-	// 	color: #333333;
-	// 	line-height: 18px;
-	// 	display: inline-block;
-	// }
-
-	// .datatimeboxbo span:nth-child(1) {
-	// 	margin-right: 40px;
-	// }
-
-	// .datatimeboxbtspan {
-	// 	display: inline-block;
-	// 	width: 130px;
-	// 	height: 32px;
-	// 	background: #F2F2F2;
-	// 	border-radius: 5px;
-	// 	line-height: 32px;
-	// 	text-align: center;
-	// 	color: #666666;
-	// 	font-size: 12px;
-	// }
-
-	// .datatimeboxbt span:nth-child(2) {
-	// 	color: #979797;
-	// 	text-align: center;
-	// 	width: 40px;
-	// 	display: inline-block;
-	// } 
-	// .datatimeboxbt span:nth-child(3) {
-	// 	float: right;
-	// }
-
-	// .datatimeboxt div {
-	// 	display: inline-block;
-	// 	width: 90px;
-	// 	height: 30px;
-	// 	line-height: 30px;
-	// 	border-radius: 5px;
-	// 	font-size: 12px;
-	// 	text-align: center;
-	// 	margin-top: 18px;
-	// 	margin-right: 10px;
-	// }
-
-	// .checkedbox {
-	// 	background: #FADD5C;
-	// 	color: #333333;
-	// }
-	// .checkedboxno {
-	// 	background: #F2F2F2;
-	// 	color: #999999;
-	// } */
-	.copyadd{
+	.copyadd {
 		font-size: 12px;
 		color: #999999;
-		width:150px;
-		text-align:right;
-		margin-right:5px;
+		width: 150px;
+		text-align: right;
+		margin-right: 5px;
 	}
-	.copyimg{
+
+	.copyimg {
 		width: 16px;
 		height: 16px;
-		margin-top:5px;
+		margin-top: 5px;
+	}
+	.datatimeboxtt{
+		margin: 20px 0;
+	}
+
+	.datatimeboxtt span:nth-child(1){
+		font-size: 20px;
+		color: #333333
+	}
+		
+	.datatimeboxtt span:nth-child(2){
+		float: right;
 	}
 	.datatimeboxbf {
 		background: #FADD5C;
@@ -620,7 +618,12 @@
 		font-size: 13px;
 		color: #000000;
 	}
-
+	.loadingbox{
+		width: 100%;
+		position: fixed;
+		top:50%;
+		text-align: center;
+	}
 	/deep/.van-nav-bar .van-icon {
 		color: #000000;
 	}
