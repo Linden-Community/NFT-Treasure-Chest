@@ -1,5 +1,5 @@
 <template>
-	<div class="wrap">
+	<div :class="sellList==''?'wrap':'wrapbg'">
 		<div class="contenttop">
 			<div class="contenttitle">
 				<span>占位</span>
@@ -263,6 +263,14 @@
 	}
 </script>
 <style scoped>
+	.wrapbg{
+		background: #FFFFFF;
+		height: 100vh;
+	}
+	.wrap{
+		background: #F7F7F7;
+		height: 100vh;
+	}
 	.nolist {
 		background: #F7F7F7;
 		width: 100%;
@@ -443,6 +451,7 @@
 	.oneboxrtl {
 		font-size: 13px;
 		color: #333333;
+		vertical-align: top;
 	}
 
 	.oneboxrtr {

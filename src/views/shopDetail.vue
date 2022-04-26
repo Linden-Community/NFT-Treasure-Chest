@@ -30,7 +30,8 @@
 					<span class="spantwo">{{detaillist.price}}</span>
 					<span class="spanthree">{{`（$${detaillist.uprice}）`}}</span>
 				</div>
-				<div class="contenttwotr" @click="buyClick">Buy now</div>
+				<div v-if="detaillist.owner != myaddress" class="contenttwotr" @click="buyClick">Buy now</div>
+				<div v-else class="contenttwotrn" >Buy now</div>
 			</div>
 			<div>
 				<van-collapse v-model="activeNames">
@@ -61,12 +62,15 @@
 								<van-col span="6">Date</van-col>
 							</van-row>
 							<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
-								<van-col span="6">{{item.price}}</van-col>
-								<van-col span="6"><span class="addurl"
-										@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
-								<van-col span="6"><span class="addurl"
-										@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
-								<van-col span="6">{{item.createTime | ellipsis}}</van-col>
+								<div v-if="datalist.length==0" class="nodata">No deal</div>
+								<div v-else>
+									<van-col span="6">{{item.price}}</van-col>
+									<van-col span="6"><span class="addurl"
+											@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
+									<van-col span="6"><span class="addurl"
+											@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
+									<van-col span="6">{{item.createTime | ellipsis}}</van-col>
+								</div>
 							</van-row>
 						</van-collapse-item>
 					</van-list>
@@ -79,7 +83,7 @@
 <script>
 	import Vue from 'vue'
 	import Abi from '../json/Abi.js'
-	import BigNumber from "bignumber.js";
+	import BigNumber from "bignumber.js"
 	import {
 		Collapse,
 		CollapseItem,
@@ -107,15 +111,19 @@
 				loading: false,
 				finished: false,
 				pageLoading:false,
+				myaddress:sessionStorage.getItem('myAddress'),
 			}
 		},
 		mounted() {
 			this.detailNft(this.$route.query.userId)
+			console.log(this.$route.query.userId,11)
 		},
 		methods: {
-			onMore() {
-				this.page++
-				this.loglist()
+			onMore() {	
+				if(this.detaillist!=''){
+					this.page++
+					this.loglist()
+				}
 			},
 			copyclick(txt) {
 				console.log(txt)
@@ -127,13 +135,22 @@
 			},
 			//跳转他人地址
 			gootheraddress(address) {
-				console.log(address)
-				this.$router.push({
-					name: 'otherList',
-					query: {
-						address: address
-					}
-				})
+				if(address==this.myaddress){
+					this.$router.push({
+						name: 'me',
+						query: {
+							address: address
+						}
+					})
+				}else{
+					this.$router.push({
+						name: 'otherList',
+						query: {
+							address: address
+						}
+					})
+				}
+				
 			},
 			//购买
 			buyClick() {
@@ -160,13 +177,24 @@
 											console.log('from prices :' + prices)
 										})
 									this.pageLoading = true
+									var myvalue = BigNumber(web3.utils.toWei(this.detaillist.price.toString(), 'ether'))
 									//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
-									myContract.methods.buy(BigNumber(this.detaillist.tokenId)).send({
+									myContract.methods.buy(this.detaillist.tokenId).send({
 										from: res[0],
-										value: BigNumber(web3.utils.toWei(this.detaillist.price, 'ether'))//动态获取商品价格
+										value: myvalue//动态获取商品价格
 									}).then(res => {
-										this.pageLoading = false
 										console.log('from res :' + res)
+										if (JSON.stringify(res.status) == 'true') {
+											this.$toast('Authorization succeeded')
+											console.log("success")
+											//刷新页面
+											//location.reload()
+											this.pageLoading = false
+											this.$router.push('me') 
+										} else {
+											this.$toast(res.message)
+											console.log(res.message)
+										}
 									}).catch((error) => {
 										this.pageLoading = false
 										this.$toast(error.message)
@@ -196,7 +224,6 @@
 				})
 			},
 			loglist() {
-				console.log(this.detaillist.contract,11111)
 				const params = {
 					pageNo: this.page,
 					pageSize: this.num,
@@ -224,6 +251,10 @@
 	}
 </script>
 <style scoped>
+	.nodata{
+		margin: 10px auto;
+		text-align: center;
+	}
 	.headerbox {
 		position: fixed;
 		width: 100%;
@@ -374,7 +405,20 @@
 		font-size: 13px;
 		margin-top: 10px;
 	}
-
+.contenttwotrn{
+	float: right;
+	width: 105px;
+	height: 27px;
+	line-height: 27px;
+	background: #cdcdcd;
+	border-radius: 8px;
+	font-family: SourceHanSansCN-Regular, SourceHanSansCN;
+	font-weight: 400;
+	color: #000000;
+	text-align: center;
+	font-size: 13px;
+	margin-top: 10px;
+}
 	.mycell {
 		background-color: #FFFFFF;
 	}

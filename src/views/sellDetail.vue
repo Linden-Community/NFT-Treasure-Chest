@@ -114,7 +114,7 @@
 		data() {
 			return {
 				activeNames: [0],
-				amount: '',
+				amount:'',
 				detaillist: [],
 				tipboxshow: false,
 				minDate: new Date(2010, 0, 1),
@@ -205,6 +205,7 @@
 					if (res.code == "200") {
 						this.detaillist = res.result
 						this.copyIds = res.result.tokenId
+						this.amount = res.result.price==''?'':res.result.price
 						this.empower()
 					} else {
 						this.$toast(res.message)
@@ -224,27 +225,36 @@
 							const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
 							//授权nft
 							this.mytokenId = BigNumber(this.detaillist.tokenId)
-							this.pageLoading = true
-							myContractNft.methods.approve(addressNFT, this.mytokenId)
-								.send({
-									from: res[0]
-								}).then(res => {
-									console.log('from res :' + res)
-									if (JSON.stringify(res.status) == 'true') {
-										this.$toast('Authorization succeeded')
-										console.log("success")
-										//刷新页面
-										//location.reload()
-										this.pageLoading = false
-									} else {
-										this.$toast(res.message)
-										console.log(res.message)
+							myContractNft.methods.getApproved(this.mytokenId).call().then(
+								approve => {
+									console.log('from approve :' + approve)
+									if(approve!=='0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c'){
+										this.pageLoading = true
+										myContractNft.methods.approve('0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c', this.mytokenId)
+											.send({
+												from: res[0]
+											}).then(res => {
+												console.log('from res :' + res)
+												if (JSON.stringify(res.status) == 'true') {
+													this.$toast('Authorization succeeded')
+													console.log("success")
+													//刷新页面
+													//location.reload()
+													this.pageLoading = false
+												} else {
+													this.$toast(res.message)
+													console.log(res.message)
+												}
+											}).catch((error) => {
+												this.pageLoading = false
+												this.$toast(error.message)
+												console.log("授权error--->" + error.code, error.message)
+											})
+									}else{
+										console.log(11)
 									}
-								}).catch((error) => {
-									this.pageLoading = false
-									this.$toast(error.message)
-									console.log("授权error--->" + error.code, error.message)
 								})
+	
 						}
 					})
 				} else {
@@ -281,7 +291,7 @@
 											console.log("success")
 											this.pageLoading = false
 											//跳转页面
-											this.$router.push('me') 
+											this.$router.push('Home') 
 										} else {
 											this.$toast(res.message)
 											console.log(res.message)

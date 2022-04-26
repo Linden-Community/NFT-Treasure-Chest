@@ -11,7 +11,7 @@
 		</div>
 		<div v-else class="onebox">
 			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
-			<div class="oneboxcell" v-for="(item,index) in searchlist" :key='index' :title="item">
+			<div class="oneboxcell" v-for="(item,index) in searchlist" :key='index' :title="item" @click="gotodetail(item)">
 				<div class="oneboxl">
 					<img v-if="item.image==null" src="../assets/images/nolist.png">
 					<img v-else :src="item.image">
@@ -73,6 +73,25 @@
 			onSearch(){
 				this.searchRequest(this.owneradd)
 			},
+			gotodetail(item) {
+				if(item.price==null){
+					console.log(item.price,1)
+					this.$router.push({
+						name: 'sellDetail',
+						query: {
+							userId: item.id
+						}
+					})
+				}else{
+					this.$router.push({
+						name: 'shopDetail',
+						query: {
+							userId: item.id
+						}
+					})
+				}
+				
+			},
 			searchRequest(owner){
 				const params = {
 					pageNo: this.page,
@@ -123,7 +142,7 @@
 	.nosearch img {
 		width: 105px;
 		height: 105px;
-		margin-top: 100px;
+		margin-top: 200px;
 		margin-bottom: 10px;
 	}
 	

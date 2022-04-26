@@ -1,9 +1,9 @@
 <template>
-	<div class="wrap">
+	<div :class="sellList==''?'wrap':'wrapbg'">
 		<div class="contenttop">
 			<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
 			<div class="userInfobox">
-				<div class="userInfoboxl"><img src="https://cdn.jsdelivr.net/npm/@vant/assets/cat.jpeg"></div>
+				<div class="userInfoboxl"><img src="../assets/images/icon1.png"></div>
 				<div class="userInfoboxr">
 					<div class="userInfoboxrb">
 						<span class="userInfoboxrbl"><img
@@ -22,7 +22,7 @@
 			</div>
 			<div class="onebox" v-else>
 				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
-					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item">
+					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell">
 						<div class="oneboxl">
 							<img v-if="item.image==null" src="../assets/images/zw.png">
 							<img v-else :src="item.image">
@@ -116,9 +116,9 @@
 			},
 			gotosell(item) {
 				this.$router.push({
-					name: 'sellDetail',
+					name: 'shopDetail',
 					query: {
-						userId: item.id
+						userId: item.tokenId
 					}
 				})
 			}
@@ -126,14 +126,20 @@
 	}
 </script>
 <style scoped>
-
+	.wrapbg{
+		background: #FFFFFF;
+		height: 100vh;
+	}
+	.wrap{
+		background: #F7F7F7;
+		height: 100vh;
+	}
 	.nolist {
 		background: #F7F7F7;
 		width: 100%;
 	}
 
 	.nolist img {
-		width: 105px;
 		height: 105px;
 		margin-top: 100px;
 		margin-bottom: 10px;
