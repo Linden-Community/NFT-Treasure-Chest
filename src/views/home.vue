@@ -89,7 +89,7 @@
 						this.loading = false
 						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
-							this.finishedText = '没有更多了...'
+							this.finishedText = 'No more...'
 							return
 						}
 					} else {

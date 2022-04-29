@@ -83,7 +83,7 @@
 				</van-collapse>
 			</div>
 		</div>
-		<div class="sell" @click="sellsub">sell</div>
+		<div class="sell" @click="empower">sell</div>
 		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
 	</div>
 </template>
@@ -128,19 +128,24 @@
 				copyIds: '',
 				mytokenId: '',
 				pageLoading:false,
+				address:'0x1A3B441D42F733fbC55774456D62081CAd462c3C',
+				addressNFT:'0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd',
 			}
 		},
 		mounted() {
 			this.shopid = this.$route.query.userId
 			this.detailNft(this.$route.query.userId) //商品详情
 			this.putdate() //获取处理时间
-			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(0)) +
+			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(1)) +
 				' ( 1 Day ) ' //默认时间
 	
 		},
 		methods: {	
 			inputchange(e) {
 				var val = e.target.value
+				//不能出现001等
+				val = val.replace(/^0+\./g,'0.');
+				val = val.match(/^0+[1-9]+/)?val=val.replace(/^0+/g,''):val;
 				//先把非数字的都替换掉，除了数字和.
 				val = val.replace(/[^\d.]/g,"");
 			    //保证只有出现一个.而没有多个.
@@ -164,9 +169,9 @@
 			//复制
 			copyclick(txt) {
 				this.$copyText(txt).then(() => {
-					this.$toast('已成功复制到剪切板')
+					this.$toast('Successfully copied to clipboard')
 				}).catch(() => {
-					this.$toast('复制失败')
+					this.$toast('Copy failed')
 				})
 			},
 			//大弹框
@@ -206,7 +211,7 @@
 						this.detaillist = res.result
 						this.copyIds = res.result.tokenId
 						this.amount = res.result.price==''?'':res.result.price
-						this.empower()
+						//this.empower()
 					} else {
 						this.$toast(res.message)
 					}
@@ -221,16 +226,16 @@
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//NFT合约地址
-							const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
-							const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
+							//const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
+							const myContractNft = new web3.eth.Contract(AbiNft, this.addressNFT)
 							//授权nft
 							this.mytokenId = BigNumber(this.detaillist.tokenId)
 							myContractNft.methods.getApproved(this.mytokenId).call().then(
 								approve => {
 									console.log('from approve :' + approve)
-									if(approve!=='0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c'){
+									if(approve!==this.address){
 										this.pageLoading = true
-										myContractNft.methods.approve('0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c', this.mytokenId)
+										myContractNft.methods.approve(this.address, this.mytokenId)
 											.send({
 												from: res[0]
 											}).then(res => {
@@ -241,6 +246,7 @@
 													//刷新页面
 													//location.reload()
 													this.pageLoading = false
+													this.sellsub()
 												} else {
 													this.$toast(res.message)
 													console.log(res.message)
@@ -252,6 +258,7 @@
 											})
 									}else{
 										console.log(11)
+										this.sellsub()
 									}
 								})
 	
@@ -264,8 +271,8 @@
 			//上架
 			sellsub() {
 				if (this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
-					this.$toast('请输入0.0001-9999.9999之间的数字')
-				} else {
+					this.$toast('Please enter a number between 0.0001-9999.9999')
+				}else  {
 					if (window.ethereum) {
 						window.ethereum.enable().then((res) => {
 							if (!res[0]) {
@@ -273,13 +280,13 @@
 							} else {
 								const web3 = new this.Web3(window.web3.currentProvider)
 								//交易所合约地址
-								const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
-								const myContract = new web3.eth.Contract(Abi, address)
+								//const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
+								const myContract = new web3.eth.Contract(Abi, this.address)
 								//授权nft
 								this.mytokenId = BigNumber(this.detaillist.tokenId)
 								this.pageLoading = true
 								//上架NFT商品（商品id 金额 时间）
-								myContract.methods.sell(this.mytokenId, BigNumber(web3.utils.toWei(this.amount,
+								myContract.methods.sell(this.detaillist.contract,this.mytokenId, BigNumber(web3.utils.toWei(this.amount.toString(),
 											'ether')),
 										this.mytime)
 									.send({
@@ -291,7 +298,7 @@
 											console.log("success")
 											this.pageLoading = false
 											//跳转页面
-											this.$router.push('Home') 
+											this.$router.push('/') 
 										} else {
 											this.$toast(res.message)
 											console.log(res.message)

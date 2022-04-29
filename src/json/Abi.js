@@ -32,6 +32,11 @@ module.exports = [{
 		"type": "address"
 	}, {
 		"indexed": false,
+		"internalType": "address",
+		"name": "nftCode",
+		"type": "address"
+	}, {
+		"indexed": false,
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
@@ -59,6 +64,11 @@ module.exports = [{
 		"indexed": false,
 		"internalType": "address",
 		"name": "to",
+		"type": "address"
+	}, {
+		"indexed": false,
+		"internalType": "address",
+		"name": "nftCode",
 		"type": "address"
 	}, {
 		"indexed": false,
@@ -200,6 +210,20 @@ module.exports = [{
 	"type": "function"
 }, {
 	"inputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}],
+	"name": "addNftCode",
+	"outputs": [],
+	"stateMutability": "nonpayable",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}, {
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
@@ -230,16 +254,20 @@ module.exports = [{
 	"type": "function"
 }, {
 	"inputs": [],
-	"name": "getNftCode",
+	"name": "getNftCodes",
 	"outputs": [{
-		"internalType": "contract IERC721",
-		"name": "nftCode",
-		"type": "address"
+		"internalType": "contract IERC721[]",
+		"name": "nftCodes",
+		"type": "address[]"
 	}],
 	"stateMutability": "view",
 	"type": "function"
 }, {
 	"inputs": [{
+		"internalType": "address",
+		"name": "nftCode",
+		"type": "address"
+	}, {
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
@@ -254,6 +282,10 @@ module.exports = [{
 	"type": "function"
 }, {
 	"inputs": [{
+		"internalType": "address",
+		"name": "nftCode",
+		"type": "address"
+	}, {
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
@@ -324,10 +356,6 @@ module.exports = [{
 	"type": "function"
 }, {
 	"inputs": [{
-		"internalType": "contract IERC721",
-		"name": "nftCode",
-		"type": "address"
-	}, {
 		"internalType": "uint256",
 		"name": "minDuration",
 		"type": "uint256"
@@ -380,6 +408,20 @@ module.exports = [{
 	"type": "function"
 }, {
 	"inputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}],
+	"name": "rmNftCode",
+	"outputs": [],
+	"stateMutability": "nonpayable",
+	"type": "function"
+}, {
+	"inputs": [{
+		"internalType": "contract IERC721",
+		"name": "nftCode",
+		"type": "address"
+	}, {
 		"internalType": "uint256",
 		"name": "tokenId",
 		"type": "uint256"
@@ -413,16 +455,6 @@ module.exports = [{
 		"type": "uint256"
 	}],
 	"name": "setMinDuration",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-}, {
-	"inputs": [{
-		"internalType": "contract IERC721",
-		"name": "nftCode",
-		"type": "address"
-	}],
-	"name": "setNftCode",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"

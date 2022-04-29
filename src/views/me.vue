@@ -151,9 +151,9 @@
 			//复制
 			copyClick(txt) {
 				this.$copyText(txt).then(() => {
-					this.$toast('已成功复制到剪切板')
+					this.$toast('Successfully copied to clipboard')
 				}).catch(() => {
-					this.$toast('复制失败')
+					this.$toast('Copy failed')
 				})
 			},
 			//get获去地址
@@ -216,7 +216,7 @@
 						this.loading = false
 						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
-							this.finishedText = '没有更多了...'
+							this.finishedText = 'No more...'
 							return
 						}
 
@@ -249,12 +249,21 @@
 				})
 			},
 			gotosell(item) {
-				this.$router.push({
-					name: 'sellDetail',
-					query: {
-						userId: item.id
-					}
-				})
+				if(item.price!=null){
+					this.$router.push({
+						name: 'shopDetail',
+						query: {
+							userId: item.id
+						}
+					})
+				}else{
+					this.$router.push({
+						name: 'sellDetail',
+						query: {
+							userId: item.id
+						}
+					})
+				}
 			}
 		},
 		components: {

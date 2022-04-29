@@ -61,17 +61,17 @@
 								<van-col span="6">To</van-col>
 								<van-col span="6">Date</van-col>
 							</van-row>
+							<div v-if="datalist.length==0" class="nodata">No deal</div>
+							<div v-else>
 							<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
-								<div v-if="datalist.length==0" class="nodata">No deal</div>
-								<div v-else>
 									<van-col span="6">{{item.price}}</van-col>
 									<van-col span="6"><span class="addurl"
 											@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
 									<van-col span="6"><span class="addurl"
 											@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
 									<van-col span="6">{{item.createTime | ellipsis}}</van-col>
-								</div>
 							</van-row>
+							</div>
 						</van-collapse-item>
 					</van-list>
 				</van-collapse>
@@ -128,9 +128,9 @@
 			copyclick(txt) {
 				console.log(txt)
 				this.$copyText(txt).then(() => {
-					this.$toast('已成功复制到剪切板')
+					this.$toast('Successfully copied to clipboard')
 				}).catch(() => {
-					this.$toast('复制失败')
+					this.$toast('Copy failed')
 				})
 			},
 			//跳转他人地址
@@ -161,9 +161,9 @@
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//合约地址
-							const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
+							const address = "0x1A3B441D42F733fbC55774456D62081CAd462c3C"
 							const myContract = new web3.eth.Contract(Abi, address)
-							myContract.methods.getOffShelfTime(this.detaillist.tokenId).call().then(
+							myContract.methods.getOffShelfTime(this.detaillist.contract,this.detaillist.tokenId).call().then(
 							timesTamp => {
 								//获取当前时间戳单位毫秒
 								var dataTime = new Date().getTime()
@@ -172,33 +172,35 @@
 								if (timesTamp * 1000 - dataTime > 0) {
 									//商品未下架获取商品价格
 									//NFT上架价格
-									myContract.methods.getPrices(this.detaillist.tokenId).call().then(
+									myContract.methods.getPrices(this.detaillist.contract,this.detaillist.tokenId).call().then(
 										prices => {
 											console.log('from prices :' + prices)
+											var myvalue = BigNumber(prices)
+											this.pageLoading = true
+											//var myvalue = BigNumber(web3.utils.toWei(this.detaillist.price.toString(), 'ether'))
+											//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
+											myContract.methods.buy(this.detaillist.contract,this.detaillist.tokenId).send({
+												from: res[0],
+												value: myvalue//动态获取商品价格
+											}).then(res => {
+												console.log('from res :' + res)
+												if (JSON.stringify(res.status) == 'true') {
+													this.$toast('Authorization succeeded')
+													console.log("success")
+													//刷新页面
+													//location.reload()
+													this.pageLoading = false
+													this.$router.push('me') 
+												} else {
+													this.$toast(res.message)
+													console.log(res.message)
+												}
+											}).catch((error) => {
+												this.pageLoading = false
+												this.$toast(error.message)
+											})
 										})
-									this.pageLoading = true
-									var myvalue = BigNumber(web3.utils.toWei(this.detaillist.price.toString(), 'ether'))
-									//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
-									myContract.methods.buy(this.detaillist.tokenId).send({
-										from: res[0],
-										value: myvalue//动态获取商品价格
-									}).then(res => {
-										console.log('from res :' + res)
-										if (JSON.stringify(res.status) == 'true') {
-											this.$toast('Authorization succeeded')
-											console.log("success")
-											//刷新页面
-											//location.reload()
-											this.pageLoading = false
-											this.$router.push('me') 
-										} else {
-											this.$toast(res.message)
-											console.log(res.message)
-										}
-									}).catch((error) => {
-										this.pageLoading = false
-										this.$toast(error.message)
-									})
+									
 								} else {
 									this.$toast('商品已下架')
 								}
@@ -410,11 +412,11 @@
 	width: 105px;
 	height: 27px;
 	line-height: 27px;
-	background: #cdcdcd;
+	background: #CCCCCC;
 	border-radius: 8px;
 	font-family: SourceHanSansCN-Regular, SourceHanSansCN;
 	font-weight: 400;
-	color: #000000;
+	color: #FFFFFF;
 	text-align: center;
 	font-size: 13px;
 	margin-top: 10px;

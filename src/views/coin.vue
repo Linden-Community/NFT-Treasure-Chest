@@ -5,7 +5,7 @@
 			<span class="spanone">Upload work<span>*</span></span>
 			<!-- <span class="spantwo">Supported formats: JPG、PNG</span> -->
 			<span class="spanthree">Maximum supported: 10MB</span>
-			<div class="divone">
+			<div :class="imageData==''?'divone':'divonehas'">
 				<van-uploader v-model="fileList" multiple :max-count="1" :max-size="10240 * 1024"
 					:before-read="beforeRead" :before-delete="delImg" />
 			</div>
@@ -212,6 +212,13 @@
 		width: 100%;
 		height: 150px;
 		background: rgba(59, 59, 59, 0.34);
+		border-radius: 5px;
+		box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.15);
+	}
+	.divonehas {
+		margin-top: 12px;
+		width: 100%;
+		height: 150px;
 		border-radius: 5px;
 		box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.15);
 	}

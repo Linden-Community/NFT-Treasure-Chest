@@ -22,7 +22,7 @@
 			</div>
 			<div class="onebox" v-else>
 				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
-					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell">
+					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 						<div class="oneboxl">
 							<img v-if="item.image==null" src="../assets/images/zw.png">
 							<img v-else :src="item.image">
@@ -79,9 +79,9 @@
 		methods: {
 			copyClick(txt) {
 				this.$copyText(txt).then(() => {
-					this.$toast('已成功复制到剪切板')
+					this.$toast('Successfully copied to clipboard')
 				}).catch(() => {
-					this.$toast('复制失败')
+					this.$toast('Copy failed')
 				})
 			},
 			onMore() {
@@ -96,7 +96,6 @@
 					type: 1,
 				}
 				listSell(params).then(res => {
-					console.log("数据", res)
 					if (res.code == '200') {						
 						if (this.page == 1) {
 							this.sellList = res.result.list
@@ -106,7 +105,7 @@
 						this.loading = false
 						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
-							this.finishedText = '没有更多了...'
+							this.finishedText = 'No more...'
 							return
 						}	
 					} else {
@@ -118,7 +117,7 @@
 				this.$router.push({
 					name: 'shopDetail',
 					query: {
-						userId: item.tokenId
+						userId: item.id
 					}
 				})
 			}
