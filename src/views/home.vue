@@ -7,7 +7,7 @@
 				</template>
 			</van-nav-bar>
 		</div>
-		<div v-if="shoplist.length==0" class="nolist">
+		<div v-if="shoplist.length==0 && emptyflag == 1" class="nolist">
 			<div><img src="../assets/images/nolist.png" /></div>
 			<div>No items to display</div>
 		</div>
@@ -19,15 +19,15 @@
 					<img v-if="item.image==null" class="boximg" src="../assets/images/zw.png" />
 					<img v-else class="boximg" :src="item.image" />
 					<div class="boxleft">
-						<span class="boxleftonel">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
-						<span class="boxleftoner">Price</span>
+						<span class="boxleftonel omit">{{item.name==null?'name':item.name}}</span>
+						<!-- <span class="boxleftoner">Price</span> -->
 					</div>
 					<div class="boxleft">
-						<span class="boxlefttwol omit">{{item.name==null?'name':item.name}}</span>
+						<span class="boxlefttwol">Price</span>
 						<span class="boxlefttwor omit"><img src="../assets/images/icon1.png">{{item.price}}</span>
 					</div>
 					<div class="boxleft">
-						<span class="boxleftthreel omit">#{{item.tokenId}}</span>
+						<span class="boxleftthreel">End date</span>
 						<span class="boxleftthreer omit">{{item.offSheftTime}}</span>
 					</div>
 				</div>
@@ -62,13 +62,18 @@
 				loading: false,
 				finished: false,
 				finishedText: '',
+				emptyflag:0,//接口0调用前1调用后
 			}
 		},
-		mounted() {
+		created(){
 			this.listRequest()
 			this.empower() //授权账户
 		},
+		mounted() {
+			
+		},
 		methods: {
+			
 			onMore() {
 				this.page++
 				this.listRequest()
@@ -79,7 +84,9 @@
 					pageNo: this.page,
 					pageSize: this.num,
 				}
+				this.emptyflag = 0
 				listNft(params).then(res => {
+					this.emptyflag = 1
 					if (res.code == '200') {
 						if (this.page == 1) {
 							this.shoplist = res.result.list
@@ -126,12 +133,12 @@
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
-							this.$toast('请先登录小狐狸')
+							this.$toast('Please log in to little fox first')
 						} 
 						sessionStorage.setItem("myAddress", res[0])
 					})
 				} else {
-					this.$toast('请安装MetaMask,浏览器才能开始使用。');
+					this.$toast('Please install metamask before the browser can be used.');
 				}
 			},
 			//商品描述
@@ -195,7 +202,7 @@
 		margin: 0 0 10px 0;
 		display: inline-block;
 		background: #FFFFFF;
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+		box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
 		border-radius: 10px;
 	}
 
@@ -204,8 +211,11 @@
 	}
 
 	.boximg {
+		object-fit:cover;
+		object-position:50% 50%;
 		width: 100%;
 		height: 163px;
+		border-radius: 3px 3px 0 0;
 	}
 
 	.boxleft {
@@ -214,7 +224,9 @@
 	}
 
 	.boxleftonel {
-		color: #666666;
+		font-size: 13px;
+		max-width: 150px;
+		color: #333333;
 	}
 
 	.boxleftoner {
@@ -243,7 +255,7 @@
 	}
 
 	.boxleftthreel {
-		color: #333333;
+		color: #999999;
 		width: 50px;
 	}
 

@@ -2,10 +2,12 @@
 	<div :class="sellList==''?'wrap':'wrapbg'">
 		<div class="contenttop">
 			<div class="contenttitle">
-				<span>占位</span>
-				<span>My list</span>
 				<span @click="search">
-					<van-icon name="search" size="25" />
+					<van-icon name="search" size="20" />
+				</span>
+				<span>My list</span>
+				<span @click="buylist">
+					<van-icon name="orders-o" size="20" />
 				</span>
 			</div>
 			<div class="userInfobox">
@@ -24,13 +26,37 @@
 		<div class="contentbottom">
 			<van-tabs :active="active" shrink @click="getInfo">
 				<van-tab v-for="(item,index) in tablist" :key='index' :title="item">
-					<div v-if="sellList.length==0" class="nolist">
+					<div v-if="sellList.length==0 && emptyflag == 1" class="nolist">
 						<div><img src="../assets/images/nolist.png" /></div>
 						<div>No items to display</div>
 					</div>
 					<div v-else>
-						<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
+						<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText"
+							@load="onMore" loading-text="Loading">
 							<div v-if="index==0" class="onebox">
+								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
+									@click="gotosell(item)">
+									<div class="oneboxl">
+										<img v-if="item.image==null" src="../assets/images/zw.png">
+										<img v-else :src="item.image" class="imgobject">
+									</div>
+									<div class="oneboxr">
+										<div class="oneboxrt">
+											<span class="oneboxrtl oneboxrtname">{{item.name}}</span>
+											<span
+												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
+										</div>
+										<div class="oneboxrc">
+											<span class="oneboxrtl">{{`#${item.tokenId}`}}</span>
+										</div>
+										<!-- <div class="oneboxrb">
+											<span class="oneboxrbl">Purchase time</span>
+											<span class="oneboxrbr"></span>
+										</div> -->
+									</div>
+								</div>
+							</div>
+							<div v-else-if="index==1" class="onebox">
 								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 									@click="gotosell(item)">
 									<div class="oneboxl">
@@ -39,34 +65,14 @@
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
-											<span class="oneboxrtl">{{item.name}}{{`#${item.tokenId}` | ellipsis}}</span>
-											<span
-												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
-										</div>
-										<div class="oneboxrc"></div>
-										<div class="oneboxrb">
-											<span class="oneboxrbl">Purchase time</span>
-											<span class="oneboxrbr">{{item.offSheftTime}}</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div v-else-if="index==1" class="onebox">
-								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
-									<div class="oneboxl">
-										<img v-if="item.image==null" src="../assets/images/zw.png">
-										<img v-else :src="item.image">
-									</div>
-									<div class="oneboxr">
-										<div class="oneboxrt">
-											<span class="oneboxrtl">{{item.name}}</span>
-											<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
+											<span class="oneboxrtl oneboxrtname">{{item.name}}</span>
 											<span
 												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 										</div>
 										<div class="oneboxrc">
-											<img src="../assets/images/icon1.png" />
-											{{item.price==null?'0':item.price}}
+											<span class="oneboxrtl">{{`#${item.tokenId}`}}</span>
+											<span class="oneboxrtr"><img src="../assets/images/icon1.png" />
+												{{item.price}}</span>
 										</div>
 										<div class="oneboxrb">
 											<span class="oneboxrbl">Purchase time</span>
@@ -75,7 +81,7 @@
 									</div>
 								</div>
 							</div>
-							<div v-else-if="index==2" class="onebox">
+							<!-- <div v-else-if="index==2" class="onebox">
 								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 									<div class="oneboxl">
 										<img v-if="item.image==null" src="../assets/images/zw.png">
@@ -83,7 +89,7 @@
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
-											<span class="oneboxrtl">{{item.name}}</span>
+											<span class="oneboxrtl oneboxrtname">{{item.name}}</span>
 											<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
 											<span
 												class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
@@ -98,7 +104,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div> -->
 						</van-list>
 					</div>
 				</van-tab>
@@ -133,8 +139,9 @@
 				num: 10,
 				loading: false,
 				finished: false,
-				finishedText:'',
-				mytype:0,
+				finishedText: '',
+				mytype: 0,
+				emptyflag: 0, //接口0调用前1调用后
 			}
 		},
 		mounted() {
@@ -179,9 +186,10 @@
 				listSellNum(params).then(res => {
 					if (res.code == '200') {
 						var tabone = `Not listed(${res.result.notOn})`
-						var tabtwo = `On Shelves(${res.result.hasBeenOn})`
-						var tabthree = `All(${res.result.notOn+res.result.hasBeenOn})`
-						this.tablist = [tabone, tabtwo, tabthree]
+						var tabtwo = `On shelves(${res.result.hasBeenOn})`
+						//var tabthree = `All(${res.result.notOn+res.result.hasBeenOn})`
+						//this.tablist = [tabone, tabtwo, tabthree]
+						this.tablist = [tabone, tabtwo]
 					} else {
 						this.$toast(res.message)
 					}
@@ -194,7 +202,9 @@
 					owner: address,
 					type: listtype,
 				}
+				this.emptyflag = 0
 				listSell(params).then(res => {
+					this.emptyflag = 1
 					if (res.code == '200') {
 						if (this.page == 1) {
 							if (listtype == 0) {
@@ -248,15 +258,23 @@
 					}
 				})
 			},
+			buylist() {
+				this.$router.push({
+					name: 'transactionList',
+					query: {
+						owner: this.myAddress
+					}
+				})
+			},
 			gotosell(item) {
-				if(item.price!=null){
+				if (item.price != null) {
 					this.$router.push({
 						name: 'shopDetail',
 						query: {
 							userId: item.id
 						}
 					})
-				}else{
+				} else {
 					this.$router.push({
 						name: 'sellDetail',
 						query: {
@@ -272,14 +290,16 @@
 	}
 </script>
 <style scoped>
-	.wrapbg{
+	.wrapbg {
 		background: #FFFFFF;
 		height: 100vh;
 	}
-	.wrap{
+
+	.wrap {
 		background: #F7F7F7;
 		height: 100vh;
 	}
+
 	.nolist {
 		background: #F7F7F7;
 		width: 100%;
@@ -325,7 +345,6 @@
 
 	.contenttitle span:nth-child(1) {
 		float: left;
-		color: transparent;
 	}
 
 	.contenttitle span {
@@ -403,9 +422,11 @@
 		border-top: 5px solid #F7F7F7;
 		/* margin-bottom: 50px; */
 	}
-.van-list{
-	margin-bottom: 50px;
-}
+
+	.van-list {
+		margin-bottom: 50px;
+	}
+
 	.oneboxcell {
 		width: 350px;
 		margin: 4px auto 8px auto;
@@ -413,6 +434,11 @@
 		background: linear-gradient(311deg, #FFF7EA 0%, #FFFFFF 100%);
 		border-radius: 8px;
 		border: .5px solid #D4D4D4;
+	}
+
+	.imgobject {
+		object-fit: cover;
+		object-position: 50% 50%;
 	}
 
 	.oneboxl img {
@@ -438,13 +464,12 @@
 	.oneboxrc {
 		height: 12px;
 		display: inline-block;
-		float: right;
 		margin: 13px 0;
 		width: 100%;
 		font-size: 12px;
 		color: #FFA415;
-		text-align: right;
 	}
+
 	.oneboxrc img {
 		width: 12px;
 		height: 12px;
@@ -455,12 +480,21 @@
 	.oneboxrbr {
 		float: right;
 		display: inline-block;
+		vertical-align: top;
 	}
 
 	.oneboxrtl {
 		font-size: 13px;
 		color: #333333;
 		vertical-align: top;
+	}
+
+	.oneboxrtname {
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: inline-block;
 	}
 
 	.oneboxrtr {

@@ -25,22 +25,23 @@
 					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 						<div class="oneboxl">
 							<img v-if="item.image==null" src="../assets/images/zw.png">
-							<img v-else :src="item.image">
+							<img v-else :src="item.image" class="imgobject">
 						</div>
 						<div class="oneboxr">
 							<div class="oneboxrt">
-								<span class="oneboxrtl">{{item.name}}</span>
-								<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
+								<span class="oneboxrtl oneboxrtname">{{item.name}}</span>
 								<span class="oneboxrtr">{{item.creator==null?'itemcreator':item.creator | ellipsis}}</span>
 							</div>
 							<div class="oneboxrc">
-								<img v-show="item.price!=null" src="../assets/images/icon1.png" />
-								{{item.price==null?'0':item.price}}
+								<span class="oneboxrtl">{{`#${item.tokenId}`}}</span>
+								<span class="oneboxrtr"><img src="../assets/images/icon1.png" />
+									{{item.price}}</span>
 							</div>
 							<div class="oneboxrb">
 								<span class="oneboxrbl">Purchase time</span>
 								<span class="oneboxrbr">{{item.offSheftTime}}</span>
 							</div>
+							
 						</div>
 					</div>
 				</van-list>
@@ -241,7 +242,10 @@
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
 		border-radius: 8px;
 	}
-
+.imgobject{
+		object-fit:cover;
+		object-position:50% 50%;
+	}
 	.oneboxl,
 	.oneboxr {
 		margin: 8px 0;
@@ -258,12 +262,10 @@
 	.oneboxrc {
 		height: 12px;
 		display: inline-block;
-		float: right;
 		margin: 13px 0;
 		width: 100%;
 		font-size: 12px;
 		color: #FFA415;
-		text-align: right;
 	}
 
 	.oneboxrc img {
@@ -281,6 +283,13 @@
 	.oneboxrtl {
 		font-size: 13px;
 		color: #333333;
+	}
+	.oneboxrtname {
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: inline-block;
 	}
 
 	.oneboxrtr {

@@ -15,7 +15,7 @@
 				<span>Work title</span><span>*</span>
 				<div>
 					<van-field v-model="title" center clearable label="" placeholder="Please enter work title"
-						maxlength="50">
+						maxlength="20">
 					</van-field>
 				</div>
 			</div>
@@ -23,7 +23,7 @@
 				<span>Description of the work</span>
 				<div>
 					<van-cell-group inset>
-						<van-field v-model="description" rows="2" autosize type="textarea" maxlength="100"
+						<van-field v-model="description" autosize rows="3" type="textarea" maxlength="100"
 							placeholder="Please enter a description of the work" show-word-limit />
 					</van-cell-group>
 				</div>
@@ -99,8 +99,8 @@
 			getCurrentTime() {
 				let yy = new Date().getFullYear();
 				let mm = new Date().getMonth() + 1 < 10 ? "0" + `${new Date().getMonth() + 1}` : new Date().getMonth() + 1;
-				let dd = new Date().getDate();
-				let hh = new Date().getHours();
+				let dd = new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate();
+				let hh = new Date().getHours()< 10 ? '0' + new Date().getHours() : new Date().getHours();
 				let mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes();
 				let ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds();
 				this.tokenId = `${yy}${mm}${dd}` + hh + mf + ss;
@@ -252,7 +252,6 @@
 
 	.contenttwot div {
 		margin: 10px 0;
-		height: 110px;
 		background: #FFFFFF;
 		box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.15);
 		border-radius: 4px;

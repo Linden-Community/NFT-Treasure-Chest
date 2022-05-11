@@ -7,8 +7,9 @@
 			<div class="onecell"><span class="onecelll">Minted by</span><span
 					@click="gootheraddress(detaillist.creator)"
 					class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
-			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span><span
-					class="twocellr">#{{detaillist.tokenId}}</span></div>
+			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span>
+			<!-- <span class="twocellr">#{{detaillist.tokenId}}</span> -->
+			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
 				<img v-else :src="detaillist.image" />
@@ -19,11 +20,11 @@
 					<span class="fourcelltwo"
 						@click="gootheraddress(detaillist.owner)">{{detaillist.owner==null?'detaillistowner':detaillist.owner | ellipsis}}</span>
 				</div>
-				<div class="fourcellr">{{detaillist.offSheftTime}}</div>
+				<div class="fourcellr">End date {{detaillist.offSheftTime}}</div>
 			</div>
 		</div>
 		<div class="contenttwo">
-			<div class="contenttwoo">Current Price</div>
+			<div class="contenttwoo">Current price</div>
 			<div class="contenttwot">
 				<div class="contenttwotl">
 					<span><img src="../assets/images/icon1.png"></span>
@@ -35,8 +36,8 @@
 			</div>
 			<div>
 				<van-collapse v-model="activeNames">
-					<van-collapse-item title="Details of the works2" name="1" icon="shop-o" class='mycell'>
-						<van-cell title="Contract Address">
+					<van-collapse-item title="Details of the works" name="1" icon="shop-o" class='mycell'>
+						<van-cell title="Contract address">
 							<template #right-icon>
 								<span
 									class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
@@ -50,13 +51,13 @@
 								<img class="copyimg" @click="copyclick(copyIds)" src="../assets/images/copy.png">
 							</template>
 						</van-cell>
-						<van-cell title="Token Standard" value="ERC-721" />
+						<van-cell title="Token standard" value="ERC-721" />
 						<van-cell title="Blockchain" value="BNB" />
 					</van-collapse-item>
-					<van-list v-model:loading="loading" :finished="finished" @load="onMore">
-						<van-collapse-item title="Price History" name="2" icon="shop-o" class='mycell'>
+					<van-list v-model:loading="loading" :finished="finished" @load="onMore" loading-text="Loading">
+						<van-collapse-item title="Price history" name="2" icon="shop-o" class='mycell'>
 							<van-row justify="space-between">
-								<van-col span="6">Current Price</van-col>
+								<van-col span="6">Current price</van-col>
 								<van-col span="6">Form</van-col>
 								<van-col span="6">To</van-col>
 								<van-col span="6">Date</van-col>
@@ -114,7 +115,7 @@
 				myaddress:sessionStorage.getItem('myAddress'),
 			}
 		},
-		mounted() {
+		created() {
 			this.detailNft(this.$route.query.userId)
 			console.log(this.$route.query.userId,11)
 		},
@@ -157,7 +158,7 @@
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
-							this.$toast('请先登录小狐狸')
+							this.$toast('Please log in to little fox first')
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//合约地址
@@ -202,13 +203,13 @@
 										})
 									
 								} else {
-									this.$toast('商品已下架')
+									this.$toast('The product has been taken off the shelf')
 								}
 							})
 						}
 					})
 				} else {
-					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
+					this.$toast('Please install metamask before the browser can be used.');
 				}
 			},
 			detailNft(userId) {
@@ -288,6 +289,7 @@
 		color: #FF5603;
 		font-size: 12px;
 		width: 200px;
+		margin-top: 5px;
 	}
 
 	.twocell {
@@ -295,16 +297,21 @@
 	}
 
 	.twocelll {
-		width: 43px;
-		height: 18px;
-		font-size: 18px;
+		max-width: 330px;
+		height: 20px;
+		font-size: 17px;
 		font-family: SourceHanSansCN-Medium, SourceHanSansCN;
 		font-weight: 500;
 		color: #333333;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: inline-block;	
 	}
 
 	.twocellr {
 		float: right;
+		/* margin-top: 3px; */
 	}
 
 	.threecell {
@@ -328,7 +335,6 @@
 	}
 
 	.fourcelll {
-		width: 200px;
 		display: inline-block;
 	}
 
@@ -345,6 +351,7 @@
 		color: #999999;
 		float: right;
 		display: inline-block;
+		font-size: 10px;
 	}
 
 	.contenttwo {

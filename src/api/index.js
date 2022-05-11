@@ -22,3 +22,6 @@ export const getSearch = (params) => request.post('/metadataserver/msNft/search'
 
 //铸币页面
 export const setCoin = (params) => request.post('/metadataserver/metadataV2',params)
+
+//交易列表
+export const transactionList = (params) => request.post('/metadataserver/msBuy/listNftRecord',params)

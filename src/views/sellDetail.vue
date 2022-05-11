@@ -7,11 +7,12 @@
 			<div class="onecell"><span class="onecelll">Minted by</span><span
 					@click="gootheraddress(detaillist.creator)"
 					class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
-			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span><span
-					class="twocellr">#{{detaillist.tokenId}}</span></div>
+			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span>
+			<!-- <span class="twocellr">#{{detaillist.tokenId}}</span> -->
+			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
-				<img v-else :src="detaillist.image" />
+				<img v-else :src="detaillist.image" class="imgobject"/>
 			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
@@ -25,7 +26,7 @@
 		<div class="contenttwo">
 			<div class="contenttwo1">
 				<div class="contenttwooo">
-					<div class="contenttwooot"><span class="contenttwoooto">Current Price</span><span
+					<div class="contenttwooot"><span class="contenttwoooto">Current price</span><span
 							class="contenttwooott">Fixed price</span></div>
 					<div class="contenttwooob">
 						<van-field v-model="amount" type="number" placeholder="Please enter the amount" @change="inputchange"/>
@@ -61,7 +62,7 @@
 			<div class="contenttwote">
 				<van-collapse v-model="activeNames">
 					<van-collapse-item title="Details of the works" name="1" class='mycell'>
-						<van-cell title="Contract Address">
+						<van-cell title="Contract address">
 							<template #right-icon>
 								<span
 									class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
@@ -77,13 +78,13 @@
 							</template>
 						</van-cell>
 
-						<van-cell title="Token Standard" value="ERC-721" />
+						<van-cell title="Token standard" value="ERC-721" />
 						<van-cell title="Blockchain" value="BNB" />
 					</van-collapse-item>
 				</van-collapse>
 			</div>
 		</div>
-		<div class="sell" @click="empower">sell</div>
+		<div class="sell" @click="empower">Sell</div>
 		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
 	</div>
 </template>
@@ -98,9 +99,10 @@
 		Icon,
 		Picker,
 		NavBar,
-		Loading
+		Loading,
+		Dialog 
 	} from 'vant'
-	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Field).use(CellGroup).use(Icon).use(Picker).use(NavBar).use(Loading)
+	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Field).use(CellGroup).use(Icon).use(Picker).use(NavBar).use(Loading).use(Dialog)
 	import {
 		getNft
 	} from "../api";
@@ -222,7 +224,7 @@
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
-							this.$toast('请先登录小狐狸')
+							this.$toast('Please log in to little fox first')
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//NFT合约地址
@@ -241,12 +243,22 @@
 											}).then(res => {
 												console.log('from res :' + res)
 												if (JSON.stringify(res.status) == 'true') {
-													this.$toast('Authorization succeeded')
-													console.log("success")
-													//刷新页面
-													//location.reload()
-													this.pageLoading = false
-													this.sellsub()
+													Dialog.alert({
+														message: 'Authorization is successful！ Please upload',
+														theme: 'round-button',
+														confirmButtonText:'Listed',
+														confirmButtonColor:'#FADD5C',
+														width:'200'
+													}).then(() => {
+													  // on close
+													  //this.$toast('Authorization succeeded')
+													  console.log("success")
+													  //刷新页面
+													  //location.reload()
+													  this.pageLoading = false
+													  this.sellsub()
+													});
+													
 												} else {
 													this.$toast(res.message)
 													console.log(res.message)
@@ -265,7 +277,7 @@
 						}
 					})
 				} else {
-					this.$toast('请安装 MetaMask,浏览器才能开始使用。');
+					this.$toast('Please install metamask before the browser can be used.');
 				}
 			},
 			//上架
@@ -276,7 +288,7 @@
 					if (window.ethereum) {
 						window.ethereum.enable().then((res) => {
 							if (!res[0]) {
-								this.$toast('请先登录小狐狸')
+								this.$toast('Please log in to little fox first')
 							} else {
 								const web3 = new this.Web3(window.web3.currentProvider)
 								//交易所合约地址
@@ -311,7 +323,7 @@
 							}
 						})
 					} else {
-						this.$toast('请安装 MetaMask,浏览器才能开始使用。');
+						this.$toast('Please install metamask before the browser can be used.');
 					}
 				}
 			},
@@ -367,20 +379,28 @@
 	}
 
 	.twocelll {
-		width: 43px;
-		height: 18px;
+		max-width: 330px;
 		font-size: 18px;
 		font-family: SourceHanSansCN-Medium, SourceHanSansCN;
 		font-weight: 500;
 		color: #333333;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: inline-block;
 	}
 
 	.twocellr {
 		float: right;
+		/* margin-top: 3px; */
 	}
 
 	.threecell {
 		width: 100%;
+	}
+	.imgobject{
+		object-fit:cover;
+		object-position:50% 50%;
 	}
 
 	.threecell img {

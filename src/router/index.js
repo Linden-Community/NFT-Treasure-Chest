@@ -66,6 +66,33 @@ const routes = [{
 			title: 'NFT details',
 			isMenu: true
 		}
+	},
+	{
+		path: '/transactionList',
+		name: 'transactionList',
+		component: () => import('../views/transactionList.vue'),
+		meta: {
+			title: 'Transaction record',
+			isMenu: true
+		}
+	},
+	{
+		path: '/listSellDetail',
+		name: 'listSellDetail',
+		component: () => import('../views/listSellDetail.vue'),
+		meta: {
+			title: 'Sale details',
+			isMenu: true
+		}
+	},
+	{
+		path: '/listBuyDetail',
+		name: 'listBuyDetail',
+		component: () => import('../views/listBuyDetail.vue'),
+		meta: {
+			title: 'Buy details',
+			isMenu: true
+		}
 	}
 ]
 
