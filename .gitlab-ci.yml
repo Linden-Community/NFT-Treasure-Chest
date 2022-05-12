@@ -1,0 +1,44 @@
+stages:
+#  - build
+  - push
+#build:
+#  image: node:14.18.1-alpine
+#  tags:
+#    - cici001
+#  stage: build
+#  retry: 2
+#  interruptible: true
+#  cache:
+#    key:
+#      files: 
+#        - package-lock.json
+#    paths:
+#      - node_moudles
+#      - dist
+#  script:
+#    - npm install --registry=https://registry.npm.taobao.org
+#    - npm run build
+  #artifacts:
+  #  paths:
+  #    - dist
+
+push:
+  tags:
+    - single-runner-93
+  stage: push
+  script:
+    - mv dist /opt
+    - cd /opt/dist
+    - LindDensysHash=`ipfs add -rQ .`
+    - rm -rf /opt/dist
+    - echo ${LindDensysHash}
+    - mkdir /home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/lindenstorage/hash/
+    - echo ${LindDensysHash} >/home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/lindenstorage/hash/hash.html
+    - ipfs swarm connect /dnsaddr/cipfs.cn/p2p/12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc
+    - ipfs ping 12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc -n 1
+    - curl --location --request POST "http://csg.lindensys.cn1/api/v0/pin/add?arg=${LindDensysHash1}"
+    - curl --location --request POST "http://csg.lindensys.cn1/api/v0/name/publish?arg=${LindDensysHash1}"
+  artifacts:
+    name: post-hash
+    paths:
+      - ${CI_PROJECT_DIR}/hash/
