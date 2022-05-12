@@ -36,8 +36,8 @@ push:
     - echo ${LindDensysHash} >/home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/lindenstorage/hash/hash.html
     - ipfs swarm connect /dnsaddr/cipfs.cn/p2p/12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc
     - ipfs ping 12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc -n 1
-    - curl --location --request POST "http://csg.lindensys.cn/api/v0/pin/add?arg=${LindDensysHash}"
-    - curl --location --request POST "http://csg.lindensys.cn/api/v0/name/publish?arg=${LindDensysHash}"
+    - curl --location --request POST "http://csg.lindensys.cn/api/v0/pin/add?arg=${LindDensysHash1}"
+    - curl --location --request POST "http://csg.lindensys.cn/api/v0/name/publish?arg=${LindDensysHash1}"
   artifacts:
     name: post-hash
     paths:
