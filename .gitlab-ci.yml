@@ -24,7 +24,7 @@ stages:
 
 push:
   tags:
-    - single-runner-93
+    - single-runner-83
   stage: push
   script:
     - mv dist /opt
