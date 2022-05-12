@@ -26,7 +26,7 @@
 				<div class="fourcelll">
 					<span class="fourcellone">Purchase time</span>
 				</div>
-				<div class="fourcellr">End date {{createTime}}</div>
+				<div class="fourcellr">{{createTime.substring(0,16)}}</div>
 			</div>
 		</div>
 		<div class="contenttwo">
@@ -87,6 +87,7 @@
 			}
 		},
 		mounted() {
+			localStorage.setItem('ispage', 'buy')
 			this.detailNft(this.$route.query.nftId)
 			this.buyFrom = this.$route.query.buyFrom
 			this.buyTo = this.$route.query.buyTo

@@ -12,7 +12,7 @@
 				</span>
 			</div>
 			<div class="twocell">
-				<span class="twocelll"></span>
+				<span class="twocelll">Sell to</span>
 				<span class="twocellr">
 					{{buyFrom | ellipsis}}
 					<img class="copyimg" @click="copyclick(buyFrom)" src="../assets/images/copy.png">
@@ -24,9 +24,9 @@
 			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
-					<span class="fourcellone">Purchase time</span>
+					<span class="fourcellone">Transaction time</span>
 				</div>
-				<div class="fourcellr">End date {{createTime}}</div>
+				<div class="fourcellr">{{createTime.substring(0,16)}}</div>
 			</div>
 		</div>
 		<div class="contenttwo">
@@ -87,6 +87,7 @@
 			}
 		},
 		mounted() {
+			localStorage.setItem('ispage', 'sell')
 			this.detailNft(this.$route.query.nftId)
 			this.buyFrom = this.$route.query.buyFrom
 			this.buyTo = this.$route.query.buyTo

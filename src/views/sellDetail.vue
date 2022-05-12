@@ -29,7 +29,7 @@
 					<div class="contenttwooot"><span class="contenttwoooto">Current price</span><span
 							class="contenttwooott">Fixed price</span></div>
 					<div class="contenttwooob">
-						<van-field v-model="amount" type="number" placeholder="Please enter the amount" @change="inputchange"/>
+						<van-field v-model="amount" type="number" placeholder="Please enter the amount" @change="inputchange" @blur='inputblur' maxlength="9"/>
 						<span class="coinCompany">BNB</span>
 					</div>
 				</div>
@@ -85,7 +85,7 @@
 			</div>
 		</div>
 		<div class="sell" @click="empower">Sell</div>
-		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
+		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff"/>
 	</div>
 </template>
 <script>
@@ -143,6 +143,11 @@
 	
 		},
 		methods: {	
+			inputblur(){
+				if(this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
+					this.$toast('Please enter a number between 0.0001-9999.9999')
+				}
+			},
 			inputchange(e) {
 				var val = e.target.value
 				//不能出现001等
@@ -221,6 +226,9 @@
 			},
 			//授权
 			empower() {
+				if(this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
+					this.$toast('Please enter a number between 0.0001-9999.9999')
+				}else{
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
@@ -278,6 +286,7 @@
 					})
 				} else {
 					this.$toast('Please install metamask before the browser can be used.');
+				}
 				}
 			},
 			//上架
@@ -416,7 +425,7 @@
 		position: absolute;
 		right: 20px;
 		top: 0;
-		margin: 10px 0;
+		margin: 15px 0;
 	}
 
 	.coinCompany {

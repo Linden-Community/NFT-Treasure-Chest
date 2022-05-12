@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapbg">
 		<div class="headerbox">
-			<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
+			<van-nav-bar title="Transaction record" left-arrow @click-left="$router.go(-1)" />
 		</div>
 		<div class="tablebox">
 			<span :class="index==0?'ischoose':'noischoose'" @click="chooseone">Buy</span>
@@ -13,57 +13,58 @@
 		</div>
 		<div v-else>
 			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore"
-			loading-text="Loading">
-			<div v-if="index==0" class="onebox">
-				<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
-					@click="gotosell(item)">
-					<div class="oneboxl">
-						<img v-if="item.image==null" src="../assets/images/zw.png">
-						<img v-else :src="item.image" class="imgobject">
-					</div>
-					<div class="oneboxr">
-						<div class="oneboxrt">
-							<span class="oneboxrtl oneboxrtname">{{item.title}}</span>
-							<span
-								class="oneboxrtr">Form：{{item.buyFrom==null?'itemcreator':item.buyFrom | ellipsis}}</span>
+				loading-text="Loading">
+				<div v-if="index==0" class="onebox">
+					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
+						@click="gotosell(item)">
+						<div class="oneboxl">
+							<img v-if="item.image==null" src="../assets/images/zw.png">
+							<img v-else :src="item.image" class="imgobject">
 						</div>
-						<div class="oneboxrc">
-							<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
-							<span class="oneboxrcr"><img src="../assets/images/icon1.png" />
-								{{item.price}}</span>
-						</div>
-						<div class="oneboxrb">
-							<span class="oneboxrbl">Purchase time</span>
-							<span class="oneboxrbr">{{item.createTime}}</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div v-else-if="index==1" class="onebox">
-				<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
-					@click="gotosell(item)">
-					<div class="oneboxl">
-						<img v-if="item.image==null" src="../assets/images/zw.png">
-						<img v-else :src="item.image"  class="imgobject">
-					</div>
-					<div class="oneboxr">
-						<div class="oneboxrt">
-							<span class="oneboxrtl oneboxrtname">{{item.title}}</span>
-							<span class="oneboxrtr">To：{{item.buyTo==null?'itemcreator':item.buyTo | ellipsis}}</span>
-						</div>
-						<div class="oneboxrc">
-							<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
-							<span class="oneboxrcr"><img src="../assets/images/icon1.png" />
-								{{item.price}}</span>
-						</div>
-						<div class="oneboxrb">
-							<span class="oneboxrbl">Purchase time</span>
-							<span class="oneboxrbr">{{item.createTime}}</span>
+						<div class="oneboxr">
+							<div class="oneboxrt">
+								<span class="oneboxrtl oneboxrtname">{{item.title}}</span>
+								<span
+									class="oneboxrtr">Form：{{item.buyFrom==null?'itemcreator':item.buyFrom | ellipsis}}</span>
+							</div>
+							<div class="oneboxrc">
+								<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
+								<span class="oneboxrcr"><img src="../assets/images/icon1.png" />
+									{{item.price}}</span>
+							</div>
+							<div class="oneboxrb">
+								<span class="oneboxrbl">Purchase time</span>
+								<span class="oneboxrbr">{{item.createTime.substring(0,16)}}</span>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</van-list>
+				<div v-else-if="index==1" class="onebox">
+					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
+						@click="gotosell(item)">
+						<div class="oneboxl">
+							<img v-if="item.image==null" src="../assets/images/zw.png">
+							<img v-else :src="item.image" class="imgobject">
+						</div>
+						<div class="oneboxr">
+							<div class="oneboxrt">
+								<span class="oneboxrtl oneboxrtname">{{item.title}}</span>
+								<span
+									class="oneboxrtr">To：{{item.buyTo==null?'itemcreator':item.buyTo | ellipsis}}</span>
+							</div>
+							<div class="oneboxrc">
+								<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
+								<span class="oneboxrcr"><img src="../assets/images/icon1.png" />
+									{{item.price}}</span>
+							</div>
+							<div class="oneboxrb">
+								<span class="oneboxrbl">Transaction time</span>
+								<span class="oneboxrbr">{{item.createTime.substring(0,16)}}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</van-list>
 		</div>
 	</div>
 </template>
@@ -95,8 +96,15 @@
 			}
 		},
 		mounted() {
+			let isthatpage = localStorage.getItem('ispage')
+			if(isthatpage=='sell'){
+				this.index = 1
+			}else{
+				this.index = 0
+			}
+			localStorage.setItem('ispage', '')
 			this.myAddress = this.$route.query.owner
-			this.listRequest(0, this.myAddress)
+			this.listRequest(this.index, this.myAddress)
 		},
 		methods: {
 			chooseone() {
@@ -113,8 +121,8 @@
 				this.page++
 				this.listRequest(this.index, this.myAddress)
 			},
-			gotosell(item){
-				if(this.index==0){
+			gotosell(item) {
+				if (this.index == 0) {
 					this.$router.push({
 						name: 'listBuyDetail',
 						query: {
@@ -122,10 +130,10 @@
 							buyFrom: item.buyFrom,
 							buyTo: item.buyTo,
 							createTime: item.createTime,
-							price: item.price,	
+							price: item.price,
 						}
 					})
-				}else{
+				} else {
 					this.$router.push({
 						name: 'listSellDetail',
 						query: {
@@ -133,11 +141,11 @@
 							buyFrom: item.buyFrom,
 							buyTo: item.buyTo,
 							createTime: item.createTime,
-							price: item.price,	
+							price: item.price,
 						}
 					})
 				}
-				
+
 			},
 			listRequest(listtype, address) {
 				const params = {
@@ -180,10 +188,11 @@
 </script>
 
 <style scoped>
-	.wrapbg{
+	.wrapbg {
 		background: #F7F7F7;
 		height: 100vh;
 	}
+
 	.tablebox {
 		width: 260px;
 		height: 25px;
@@ -229,10 +238,12 @@
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
 		border-radius: 8px;
 	}
-.imgobject{
-		object-fit:cover;
-		object-position:50% 50%;
+
+	.imgobject {
+		object-fit: cover;
+		object-position: 50% 50%;
 	}
+
 	.oneboxl,
 	.oneboxr {
 		margin: 8px 0;
@@ -245,9 +256,11 @@
 	.oneboxr {
 		width: 252px;
 	}
-	.oneboxrc{
+
+	.oneboxrc {
 		margin: 13px 0;
 	}
+
 	.oneboxrcr {
 		height: 12px;
 		float: right;
@@ -292,23 +305,24 @@
 		font-size: 12px;
 		color: #666666;
 	}
+
 	.nolist {
 		background: #F7F7F7;
 		width: 100%;
 	}
-	
+
 	.nolist img {
 		/* width: 105px; */
 		height: 105px;
 		margin-top: 100px;
 		margin-bottom: 10px;
 	}
-	
+
 	.nolist div:nth-child(1) {
 		margin: 0 auto;
 		text-align: center;
 	}
-	
+
 	.nolist div:nth-child(2) {
 		font-size: 12px;
 		color: #999999;
@@ -316,6 +330,7 @@
 		text-align: center;
 		padding-bottom: 80px;
 	}
+
 	/deep/.van-nav-bar .van-icon {
 		color: #000000;
 	}

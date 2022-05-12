@@ -5,7 +5,7 @@
 				<van-icon name="arrow-left" />
 			</div>
 			<div class="searchtwo">
-				<van-search v-model="searchkey" placeholder="Search collections/Wallet address/TokenID" />
+				<van-search v-model="searchkey" placeholder="Search collections/Wallet address/TokenID" @clear="clearbtn"/>
 			</div>
 			<div class="searchthree" @click="onSearch">Search</div>
 		</div>
@@ -14,12 +14,13 @@
 			<div>No items to display</div>
 		</div>
 		<div v-else class="onebox">
-			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
+			<div class="listnum">{{`Search results（`+total+`）`}}</div>
+			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore" loading-text='Loading'>
 				<div class="oneboxcell" v-for="(item,index) in searchlist" :key='index' :title="item"
 					@click="gotodetail(item)">
 					<div class="oneboxl">
 						<img v-if="item.image==null" src="../assets/images/nolist.png">
-						<img v-else :src="item.image">
+						<img v-else :src="item.image" class="imgobject">
 					</div>
 					<div class="oneboxr">
 						<div class="oneboxrt">
@@ -33,7 +34,7 @@
 							{{item.price}}
 						</div> -->
 						<div :class="item.price!=null?'oneboxrb':''">
-							<span class="oneboxrbl">{{item.offSheftTime}}</span>
+							<span class="oneboxrbl">{{item.offSheftTime!=null?item.offSheftTime.substring(0,16):''}}</span>
 							<span class="oneboxrc">
 								<img v-show="item.price!=null" src="../assets/images/icon1.png" />
 								{{item.price}}
@@ -69,6 +70,7 @@
 				loading: false,
 				finished: false,
 				finishedText: '',
+				total:'',
 			}
 		},
 		mounted() {
@@ -86,6 +88,9 @@
 			onMore() {
 				this.page++
 				this.onSearch()
+			},
+			clearbtn(){
+				this.searchRequest(this.owneradd)
 			},
 			onSearch() {
 				this.searchRequest(this.owneradd)
@@ -118,16 +123,19 @@
 				}
 				getSearch(params).then(res => {
 					if (res.code == '200') {
+						this.loading = false
+						this.total = res.result.total
 						if (this.page == 1) {
 							this.searchlist = res.result.list
 						} else {
 							this.searchlist = this.searchlist.concat(res.result.list)
 						}
-						this.loading = false
 						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
 							this.finishedText = 'No more...'
 							return
+						}else {
+							this.finished = false;
 						}
 					} else {
 						this.searchlist = []
@@ -155,7 +163,9 @@
 	.searchthree {
 		display: inline-block;
 	}
-
+/deep/.van-field__control{
+	font-size: 11px;
+}
 	.nosearch {
 		width: 100%;
 	}
@@ -193,12 +203,21 @@
 		width: 10%;
 		text-align: right;
 		font-size: 12px;
+		height: 50px;
+		line-height: 50px;
+		vertical-align: top;
 	}
 
 	.onebox {
 		padding-top: 60px;
 	}
-
+.listnum{
+	padding: 10px;
+	font-size: 13px;
+	color: #333333;
+	line-height: 20px;
+	border-bottom: 1px solid #D8D8D8;
+}
 	.oneboxcell {
 		margin: 4px 5px;
 		/*margin: 4px auto 8px auto;
@@ -214,6 +233,10 @@
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
 		border-radius: 8px;
 	}
+	.imgobject{
+		object-fit:cover;
+		object-position:50% 50%;
+	}
 
 	.oneboxl,
 	.oneboxr {
@@ -224,7 +247,7 @@
 	}
 
 	.oneboxr {
-		width: 270px;
+		width: 250px;
 	}
 
 	.oneboxrc {
@@ -238,6 +261,7 @@
 	.oneboxrc img {
 		width: 12px;
 		height: 12px;
+		vertical-align: top;
 	}
 
 	/* .oneboxrbr {

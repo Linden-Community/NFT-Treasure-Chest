@@ -3,10 +3,10 @@
 		<van-nav-bar title="Mint quantity" />
 		<div class="contentone">
 			<span class="spanone">Upload work<span>*</span></span>
-			<!-- <span class="spantwo">Supported formats: JPG、PNG</span> -->
+			<span class="spantwo">Supported formats: JPG、JPEG、PNG</span>
 			<span class="spanthree">Maximum supported: 10MB</span>
 			<div :class="imageData==''?'divone':'divonehas'">
-				<van-uploader v-model="fileList" multiple :max-count="1" :max-size="10240 * 1024"
+				<van-uploader v-model="fileList" multiple :max-count="1" :max-size="10*1024*1024" @oversize="onOversize"
 					:before-read="beforeRead" :before-delete="delImg" />
 			</div>
 		</div>
@@ -24,7 +24,8 @@
 				<div>
 					<van-cell-group inset>
 						<van-field v-model="description" autosize rows="3" type="textarea" maxlength="100"
-							placeholder="Please enter a description of the work" show-word-limit />
+							placeholder="Please enter a description of the work" show-word-limit
+							@keydown="checkEnter" />
 					</van-cell-group>
 				</div>
 			</div>
@@ -34,7 +35,7 @@
 				<div class="mint" @click="mintBtn">Mint</div>
 			</div>
 		</div>
-		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
+		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff" />
 		<foot-bar v-if="$route.meta.isMenu"></foot-bar>
 	</div>
 </template>
@@ -64,43 +65,58 @@
 				fileList: [],
 				tokenId: '',
 				imageData: '',
-				pageLoading:false,
+				pageLoading: false,
 			}
 		},
 		mounted() {
-
 		},
 		methods: {
-			// afterRead(file) {
-			// },
+			checkEnter(e) {
+				var et = e || window.event;
+			 var keycode = et.charCode || et.keyCode;
+				if (keycode == 13) {
+					if (window.event) {
+						window.event.returnValue = false;
+					} else {
+						e.preventDefault(); //for firefox
+					}
+				}
+			},
+			onOversize(file) {
+				this.$toast('Image size cannot exceed 10MB')
+			},
 			delImg(file, detail) {
-				console.log(this.fileList[0], this.imageData, 111, detail.index)
 				this.fileList.splice(detail.index, 1)
 				this.imageData = ''
-				console.log(this.fileList[0], this.imageData, 222)
 			},
 			beforeRead(file) {
-				let FormDatas = new FormData()
-				FormDatas.append('file', file)
-				this.$http({
-					url: 'https://csg.lindensys.cn/poss/v1/testnet/add',
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-					method: 'post',
-					data: FormDatas,
-				}).then(res => {
-					console.log(res.data.Hash)
-					this.imageData = 'https://csg.lindensys.cn/poss/v1/testnet/ipfs/' + res.data.Hash
-				})
-				return true
+
+				var fileType = file.type.toLowerCase()
+				if (fileType == 'image/jpeg' || fileType == 'image/png' || fileType == 'image/jpeg') {
+					let FormDatas = new FormData()
+					FormDatas.append('file', file)
+					this.$http({
+						url: 'https://csg.lindensys.cn/poss/v1/testnet/add',
+						headers: {
+							'Content-Type': 'multipart/form-data',
+						},
+						method: 'post',
+						data: FormDatas,
+					}).then(res => {
+						console.log(res.data.Hash)
+						this.imageData = 'https://csg.lindensys.cn/poss/v1/testnet/ipfs/' + res.data.Hash
+					})
+					return true
+				} else {
+					this.$toast('Uploading this format is not supported')
+				}
 			},
 			//获取19位tokenid
 			getCurrentTime() {
 				let yy = new Date().getFullYear();
 				let mm = new Date().getMonth() + 1 < 10 ? "0" + `${new Date().getMonth() + 1}` : new Date().getMonth() + 1;
 				let dd = new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate();
-				let hh = new Date().getHours()< 10 ? '0' + new Date().getHours() : new Date().getHours();
+				let hh = new Date().getHours() < 10 ? '0' + new Date().getHours() : new Date().getHours();
 				let mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes();
 				let ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds();
 				this.tokenId = `${yy}${mm}${dd}` + hh + mf + ss;
@@ -154,7 +170,7 @@
 							//location.reload()
 							this.pageLoading = false
 							//跳转
-							this.$router.push('me') 
+							this.$router.push('me')
 						} else {
 							this.$toast(res.message)
 							console.log(res.message)
@@ -177,7 +193,7 @@
 <style scoped>
 	.content {
 		background: #F7F7F7;
-		height: 100vh;
+		/* height: 100vh; */
 	}
 
 	.contentone {
@@ -215,6 +231,7 @@
 		border-radius: 5px;
 		box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.15);
 	}
+
 	.divonehas {
 		margin-top: 12px;
 		width: 100%;
@@ -286,16 +303,18 @@
 		font-weight: 400;
 		float: right;
 	}
-	.loadingbox{
+
+	.loadingbox {
 		width: 100%;
 		position: fixed;
-		top:50%;
+		top: 50%;
 		text-align: center;
 	}
+
 	.mint {
 		width: 170px;
 		height: 44px;
-		margin: 55px auto;
+		margin: 55px auto 100px auto;
 		text-align: center;
 		line-height: 44px;
 		background: #FADD5C;

@@ -61,7 +61,7 @@
 									@click="gotosell(item)">
 									<div class="oneboxl">
 										<img v-if="item.image==null" src="../assets/images/zw.png">
-										<img v-else :src="item.image">
+										<img v-else :src="item.image" class="imgobject">
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
@@ -71,12 +71,13 @@
 										</div>
 										<div class="oneboxrc">
 											<span class="oneboxrtl">{{`#${item.tokenId}`}}</span>
-											<span class="oneboxrtr"><img src="../assets/images/icon1.png" />
-												{{item.price}}</span>
+											<span class="oneboxrtr">
+												<img src="../assets/images/icon1.png" />
+												{{item.price==null?'0.00':item.price }}</span>
 										</div>
 										<div class="oneboxrb">
-											<span class="oneboxrbl">Purchase time</span>
-											<span class="oneboxrbr">{{item.offSheftTime}}</span>
+											<span class="oneboxrbl">End time</span>
+											<span class="oneboxrbr">{{item.offSheftTime!=null?item.offSheftTime.substring(0,16):''}}</span>
 										</div>
 									</div>
 								</div>
@@ -142,6 +143,7 @@
 				finishedText: '',
 				mytype: 0,
 				emptyflag: 0, //接口0调用前1调用后
+				index: 0,
 			}
 		},
 		mounted() {
@@ -149,6 +151,13 @@
 			this.myAddress = sessionStorage.getItem("myAddress")
 			this.getSellNum(this.myAddress)
 			this.listRequest(0, this.myAddress)
+			let isshoppage = localStorage.getItem('shopdelpage')
+			if(isshoppage=='shopdelpage'){
+				this.active = 1
+			}else{
+				this.active = 0
+			}
+			localStorage.setItem('shopdelpage', '')
 		},
 		methods: {
 			onMore() {
@@ -228,6 +237,8 @@
 							this.finished = true
 							this.finishedText = 'No more...'
 							return
+						}else {
+							this.finished = false;
 						}
 
 					} else {
@@ -267,16 +278,16 @@
 				})
 			},
 			gotosell(item) {
-				if (item.price != null) {
+				if (item.price == null && this.mytype == 0) {
 					this.$router.push({
-						name: 'shopDetail',
+						name: 'sellDetail',
 						query: {
 							userId: item.id
 						}
 					})
 				} else {
 					this.$router.push({
-						name: 'sellDetail',
+						name: 'shopDetail',
 						query: {
 							userId: item.id
 						}
@@ -495,6 +506,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		display: inline-block;
+		height: 16px;
 	}
 
 	.oneboxrtr {
@@ -506,6 +518,7 @@
 	.oneboxrbr {
 		font-size: 12px;
 		color: #666666;
+		vertical-align: top;
 	}
 
 	/deep/.van-tabs--line .van-tabs__wrap {

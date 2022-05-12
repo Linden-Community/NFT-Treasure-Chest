@@ -21,7 +21,7 @@
 				<div>No items to display</div>
 			</div>
 			<div class="onebox" v-else>
-				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
+				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore" loading-text='Loading'>
 					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 						<div class="oneboxl">
 							<img v-if="item.image==null" src="../assets/images/zw.png">
@@ -108,6 +108,8 @@
 							this.finished = true
 							this.finishedText = 'No more...'
 							return
+						}else {
+							this.finished = false;
 						}	
 					} else {
 						this.$toast(res.message)

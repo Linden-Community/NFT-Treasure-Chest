@@ -12,7 +12,7 @@
 			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
-				<img v-else :src="detaillist.image" />
+				<img v-else :src="detaillist.image" class="imgobject"/>
 			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
@@ -20,7 +20,7 @@
 					<span class="fourcelltwo"
 						@click="gootheraddress(detaillist.owner)">{{detaillist.owner==null?'detaillistowner':detaillist.owner | ellipsis}}</span>
 				</div>
-				<div class="fourcellr">End date {{detaillist.offSheftTime}}</div>
+				<div class="fourcellr">End date{{detaillist.offSheftTime!=null?detaillist.offSheftTime.substring(0,16):''}}</div>
 			</div>
 		</div>
 		<div class="contenttwo">
@@ -70,7 +70,7 @@
 											@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
 									<van-col span="6"><span class="addurl"
 											@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
-									<van-col span="6">{{item.createTime | ellipsis}}</van-col>
+									<van-col span="6">{{item.createTime.substring(0, item.createTime.indexOf(' '))}}</van-col>
 							</van-row>
 							</div>
 						</van-collapse-item>
@@ -78,7 +78,7 @@
 				</van-collapse>
 			</div>
 		</div>
-	<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox"/>
+	<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" van-loading  color="#0094ff"/>
 	</div>
 </template>
 <script>
@@ -116,6 +116,7 @@
 			}
 		},
 		created() {
+			localStorage.setItem('shopdelpage', 'shopdelpage')
 			this.detailNft(this.$route.query.userId)
 			console.log(this.$route.query.userId,11)
 		},
@@ -317,7 +318,10 @@
 	.threecell {
 		width: 100%;
 	}
-
+.imgobject {
+		object-fit: cover;
+		object-position: 50% 50%;
+	}
 	.threecell img {
 		width: 100%;
 		height: 300px;
@@ -475,6 +479,7 @@
 		text-align: center;
 		font-size: 11px;
 		color: #666666;
+		margin-top: 8px;
 	}
 	.loadingbox{
 		width: 100%;

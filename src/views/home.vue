@@ -1,7 +1,7 @@
 <template>
 	<div class="wrap">
 		<div class="headerbox">
-			<van-nav-bar title="List of NFTs" @click-right="onClickRight">
+			<van-nav-bar title="List of NFT" @click-right="onClickRight">
 				<template #right>
 					<van-icon name="search" size="25" />
 				</template>
@@ -13,7 +13,7 @@
 		</div>
 		<!-- 列表 -->
 		<div class="content-box" v-else>
-			<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore">
+			<van-list v-model:loading="loading" loading-text='Loading' :finished="finished" :finished-text="finishedText" @load="onMore">
 				<div class="content-boxleft" v-for="(item,index) in shoplist" :key='index' @click="godetail(item)">
 					<!-- item.image -->
 					<img v-if="item.image==null" class="boximg" src="../assets/images/zw.png" />
@@ -28,7 +28,7 @@
 					</div>
 					<div class="boxleft">
 						<span class="boxleftthreel">End date</span>
-						<span class="boxleftthreer omit">{{item.offSheftTime}}</span>
+						<span class="boxleftthreer">{{item.offSheftTime.substring(0, item.offSheftTime.indexOf(' '))}}</span>
 					</div>
 				</div>
 			</van-list>
@@ -65,17 +65,15 @@
 				emptyflag:0,//接口0调用前1调用后
 			}
 		},
+		//inject:['reload'],
 		created(){
+			this.shoplist = []
 			this.listRequest()
 			this.empower() //授权账户
 		},
-		mounted() {
-			
-		},
 		methods: {
-			
 			onMore() {
-				this.page++
+				this.page+=1
 				this.listRequest()
 			},
 			//nft列表
@@ -88,16 +86,20 @@
 				listNft(params).then(res => {
 					this.emptyflag = 1
 					if (res.code == '200') {
+						this.loading = false
 						if (this.page == 1) {
 							this.shoplist = res.result.list
 						} else {
-							this.shoplist = this.shoplist.concat(res.result.list)
+							//this.shoplist = this.shoplist.concat(res.result.list)
+							this.shoplist = [...this.shoplist, ...res.result.list]
+							
+							this.$forceUpdate()
 						}
-						this.loading = false
 						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
 							this.finishedText = 'No more...'
-							return
+						}else {
+							this.finished = false;
 						}
 					} else {
 						this.$toast(res.message)
@@ -225,7 +227,7 @@
 
 	.boxleftonel {
 		font-size: 13px;
-		max-width: 150px;
+		max-width: 145px;
 		color: #333333;
 	}
 
@@ -267,6 +269,7 @@
 	}
 
 	.omit {
+		height: 15px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
