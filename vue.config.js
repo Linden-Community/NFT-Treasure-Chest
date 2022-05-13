@@ -2,6 +2,7 @@ module.exports = {
 	publicPath: './',
 	assetsDir: 'static-PC',
 	indexPath: 'index.html', 
+	outputDir: 'dist',
 	devServer: {
 		proxy: {
 			"apiPath": {
