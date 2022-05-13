@@ -1,5 +1,6 @@
 module.exports = {
 	assetsDir: 'static-PC',
+	indexPath: 'index.html', 
 	devServer: {
 		proxy: {
 			"apiPath": {
