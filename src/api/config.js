@@ -5,13 +5,13 @@
  * baseURL: 域名地址
  * fileUpBaseUrl:上传文件
  **/
-var baseURL = ''
+var baseURL = 'https://csg.cipfs.cn'
 var fileUpBaseUrl = ''
 
 if (process.env.NODE_ENV === 'development') {
-	//baseURL = 'http://192.168.0.143:8080'
-	baseURL = '/apiPath'
-	fileUpBaseUrl = ''
+	baseURL = 'https://csg.cipfs.cn'
+	//baseURL = '/apiPath'
+	//fileUpBaseUrl = ''
 } else {
 	fileUpBaseUrl = ''
 }
