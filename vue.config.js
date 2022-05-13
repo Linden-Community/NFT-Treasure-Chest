@@ -1,4 +1,5 @@
 module.exports = {
+	publicPath: './',
 	assetsDir: 'static-PC',
 	indexPath: 'index.html', 
 	devServer: {
