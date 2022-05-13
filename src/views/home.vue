@@ -13,11 +13,13 @@
 		</div>
 		<!-- 列表 -->
 		<div class="content-box" v-else>
-			<van-list v-model:loading="loading" loading-text='Loading' :finished="finished" :finished-text="finishedText" @load="onMore">
+			<van-list v-model:loading="loading" loading-text='Loading' :finished="finished"
+				:finished-text="finishedText" @load="onMore">
 				<div class="content-boxleft" v-for="(item,index) in shoplist" :key='index' @click="godetail(item)">
 					<!-- item.image -->
-					<img v-if="item.image==null" class="boximg" src="../assets/images/zw.png" />
-					<img v-else class="boximg" :src="item.image" />
+					<!-- <img v-if="item.image==null" class="boximg" src="../assets/images/zw.png" />
+					<img v-else class="boximg" :src="item.image" /> -->
+					<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 					<div class="boxleft">
 						<span class="boxleftonel omit">{{item.name==null?'name':item.name}}</span>
 						<!-- <span class="boxleftoner">Price</span> -->
@@ -28,7 +30,8 @@
 					</div>
 					<div class="boxleft">
 						<span class="boxleftthreel">End date</span>
-						<span class="boxleftthreer">{{item.offSheftTime.substring(0, item.offSheftTime.indexOf(' '))}}</span>
+						<span
+							class="boxleftthreer">{{item.offSheftTime.substring(0, item.offSheftTime.indexOf(' '))}}</span>
 					</div>
 				</div>
 			</van-list>
@@ -58,23 +61,27 @@
 				shopImage: '',
 				shoplist: [],
 				page: 1,
-				num: 10,
+				num: 5,
 				loading: false,
 				finished: false,
 				finishedText: '',
-				emptyflag:0,//接口0调用前1调用后
+				emptyflag: 0, //接口0调用前1调用后
 			}
 		},
-		//inject:['reload'],
-		created(){
-			this.shoplist = []
+		created() {
+			// this.page = 1
+			// console.log(this.page)
+			// this.shoplist = []
 			this.listRequest()
 			this.empower() //授权账户
 		},
 		methods: {
 			onMore() {
-				this.page+=1
-				this.listRequest()
+				console.log(this.shoplist, this.page, 2)
+				let times = setTimeout(() => {
+					this.page += 1 //每请求一次，页面数+1
+					this.listRequest()
+				}, 3000)
 			},
 			//nft列表
 			listRequest() {
@@ -90,16 +97,14 @@
 						if (this.page == 1) {
 							this.shoplist = res.result.list
 						} else {
-							//this.shoplist = this.shoplist.concat(res.result.list)
-							this.shoplist = [...this.shoplist, ...res.result.list]
-							
-							this.$forceUpdate()
+							this.shoplist = this.shoplist.concat(res.result.list)
+							//this.shoplist = [...this.shoplist, ...res.result.list]
 						}
-						if (res.result.list.length == 0 || res.result.list.length < 10) {
+						if (res.result.list.length == 0 || res.result.list.length < 5) {
 							this.finished = true
 							this.finishedText = 'No more...'
-						}else {
-							this.finished = false;
+						} else {
+							this.finished = false
 						}
 					} else {
 						this.$toast(res.message)
@@ -111,7 +116,8 @@
 				this.$router.push({
 					path: 'shopDetail',
 					query: {
-						userId: item.id
+						userId: item.id,
+						ispage: 'home'
 					}
 				})
 				// this.$router.push({
@@ -126,7 +132,7 @@
 				this.$router.push({
 					name: 'search',
 					query: {
-						owneradd: '1'
+						owneradd: '1',
 					}
 				})
 			},
@@ -136,7 +142,7 @@
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
 							this.$toast('Please log in to little fox first')
-						} 
+						}
 						sessionStorage.setItem("myAddress", res[0])
 					})
 				} else {
@@ -213,11 +219,15 @@
 	}
 
 	.boximg {
-		object-fit:cover;
-		object-position:50% 50%;
-		width: 100%;
+		/* object-fit:cover;
+		object-position:100% 100%; */
+		/* width: 100%; */
 		height: 163px;
+		height: 163px;
+		background-size: contain;
+		background-repeat: no-repeat;
 		border-radius: 3px 3px 0 0;
+		background-position: center
 	}
 
 	.boxleft {
@@ -229,6 +239,7 @@
 		font-size: 13px;
 		max-width: 145px;
 		color: #333333;
+		line-height: 15px;
 	}
 
 	.boxleftoner {

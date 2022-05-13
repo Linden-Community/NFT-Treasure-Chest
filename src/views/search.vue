@@ -1,7 +1,7 @@
 <template>
 	<div class="searchboxs">
 		<div class="searchbox">
-			<div class="searchone" @click="$router.go(-1)">
+			<div class="searchone" @click="goback()">
 				<van-icon name="arrow-left" />
 			</div>
 			<div class="searchtwo">
@@ -19,8 +19,9 @@
 				<div class="oneboxcell" v-for="(item,index) in searchlist" :key='index' :title="item"
 					@click="gotodetail(item)">
 					<div class="oneboxl">
-						<img v-if="item.image==null" src="../assets/images/nolist.png">
-						<img v-else :src="item.image" class="imgobject">
+						<!-- <img v-if="item.image==null" src="../assets/images/nolist.png">
+						<img v-else :src="item.image" class="imgobject"> -->
+						<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 					</div>
 					<div class="oneboxr">
 						<div class="oneboxrt">
@@ -73,12 +74,21 @@
 				total:'',
 			}
 		},
-		mounted() {
-			//传参数判断是那个入口（我的页面owneradd="owneradd"和首页owneradd=""）
-			this.owneradd = this.$route.query.owneradd == '1' ? '' : this.$route.query.owneradd
-			console.log(this.$route.query.owneradd)
+
+		beforeRouteLeave(to, from, next) {
+			console.log(to, from)
+			if(to.name=="Home"){
+				from.meta.keepAlive = false;
+			}else{
+				from.meta.keepAlive = true;
+			}
+		  next();
 		},
+
 		methods: {
+			goback(){
+				this.$router.back()
+			},
 			hightKeyword(val) {
 				const Reg = new RegExp(this.searchkey, 'i');
 				if (val) {
@@ -86,8 +96,10 @@
 				}
 			},
 			onMore() {
-				this.page++
-				this.onSearch()
+				let times = setTimeout(() => {
+					this.page += 1 //每请求一次，页面数+1
+					this.onSearch()
+				}, 500)
 			},
 			clearbtn(){
 				this.searchRequest(this.owneradd)
@@ -96,23 +108,28 @@
 				this.searchRequest(this.owneradd)
 			},
 			gotodetail(item) {
-				if (item.price == null) {
-					console.log(item.price, 1)
-					this.$router.push({
-						name: 'sellDetail',
-						query: {
-							userId: item.id
-						}
-					})
-				} else {
-					this.$router.push({
-						name: 'shopDetail',
-						query: {
-							userId: item.id
-						}
-					})
-				}
-
+				// if (item.price == null) {
+				// 	console.log(item.price, 1)
+				// 	this.$router.push({
+				// 		name: 'sellDetail',
+				// 		query: {
+				// 			userId: item.id
+				// 		}
+				// 	})
+				// } else {
+				// 	this.$router.push({
+				// 		name: 'shopDetail',
+				// 		query: {
+				// 			userId: item.id
+				// 		}
+				// 	})
+				// }
+				this.$router.push({
+					name: 'shopDetail',
+					query: {
+						userId: item.id
+					}
+				})
 			},
 			searchRequest(owner) {
 				const params = {
@@ -125,6 +142,9 @@
 					if (res.code == '200') {
 						this.loading = false
 						this.total = res.result.total
+						if(res.result.list.length==''){
+							this.$toast('Not found')
+						}
 						if (this.page == 1) {
 							this.searchlist = res.result.list
 						} else {
@@ -135,7 +155,7 @@
 							this.finishedText = 'No more...'
 							return
 						}else {
-							this.finished = false;
+							this.finished = false
 						}
 					} else {
 						this.searchlist = []
@@ -227,11 +247,14 @@
 		border-bottom: .5px solid #D4D4D4;
 	}
 
-	.oneboxl img {
+	.boximg {
+		border-radius: 8px;
 		width: 72px;
 		height: 72px;
+		background-size: contain;
+		background-repeat: no-repeat;
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
-		border-radius: 8px;
+		background-position: center
 	}
 	.imgobject{
 		object-fit:cover;

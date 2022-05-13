@@ -1,7 +1,7 @@
 <template>
 	<div class="wrap">
 		<div class="headerbox">
-		<van-nav-bar title="NFT details" left-arrow @click-left="$router.go(-1)" />
+		<van-nav-bar title="NFT details" left-arrow @click-left="backup" />
 		</div>
 		<div class="contentone">
 			<div class="onecell"><span class="onecelll">Minted by</span><span
@@ -12,7 +12,7 @@
 			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
-				<img v-else :src="detaillist.image" class="imgobject"/>
+				<img v-else :src="detaillist.image" />
 			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
@@ -28,15 +28,18 @@
 			<div class="contenttwot">
 				<div class="contenttwotl">
 					<span><img src="../assets/images/icon1.png"></span>
-					<span class="spantwo">{{detaillist.price}}</span>
-					<span class="spanthree">{{`（$${detaillist.uprice}）`}}</span>
+					<span class="spantwo">{{detaillist.price==null?'0.00':detaillist.price}}</span>
+					<span v-if="detaillist.uprice!=null" class="spanthree">{{`（$${detaillist.uprice==null?'':detaillist.uprice}）`}}</span>
 				</div>
-				<div v-if="detaillist.owner != myaddress" class="contenttwotr" @click="buyClick">Buy now</div>
-				<div v-else class="contenttwotrn" >Buy now</div>
+				<div v-if="detaillist.owner != myaddress" class="contenttwotr" @click="buyClick" v-throttle="3000">Buy now</div>
+				<div v-else class="contenttwotrn">Buy now</div>
 			</div>
 			<div>
 				<van-collapse v-model="activeNames">
-					<van-collapse-item title="Details of the works" name="1" icon="shop-o" class='mycell'>
+					<van-collapse-item title="Introduction to the works" name="0" icon="smile-comment-o" class='mycell'>
+						<div class="descriptionbox">{{detaillist.description==''?'No details yet':detaillist.description}}</div>
+					</van-collapse-item>
+					<van-collapse-item title="Details of the works" name="1" icon="coupon-o" class='mycell'>
 						<van-cell title="Contract address">
 							<template #right-icon>
 								<span
@@ -55,15 +58,15 @@
 						<van-cell title="Blockchain" value="BNB" />
 					</van-collapse-item>
 					<van-list v-model:loading="loading" :finished="finished" @load="onMore" loading-text="Loading">
-						<van-collapse-item title="Price history" name="2" icon="shop-o" class='mycell'>
+						<van-collapse-item title="Price history" name="2" icon="todo-list-o" class='mycell'>
 							<van-row justify="space-between">
 								<van-col span="6">Current price</van-col>
-								<van-col span="6">Form</van-col>
+								<van-col span="6">From</van-col>
 								<van-col span="6">To</van-col>
 								<van-col span="6">Date</van-col>
 							</van-row>
 							<div v-if="datalist.length==0" class="nodata">No deal</div>
-							<div v-else>
+							<div v-else class="hasdata">
 							<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
 									<van-col span="6">{{item.price}}</van-col>
 									<van-col span="6"><span class="addurl"
@@ -113,14 +116,29 @@
 				finished: false,
 				pageLoading:false,
 				myaddress:sessionStorage.getItem('myAddress'),
+				ispage:''
 			}
 		},
-		created() {
-			localStorage.setItem('shopdelpage', 'shopdelpage')
+		mounted() {
+			//sessionStorage.setItem('shopdelpage', 'shopdelpage')
 			this.detailNft(this.$route.query.userId)
-			console.log(this.$route.query.userId,11)
+			this.ispage = this.$route.query.ispage
 		},
 		methods: {
+			backup(){
+				if(this.ispage=='me'){
+					this.$router.push({
+						name: 'me',
+						ispage:'me'
+					})
+				}else if(this.ispage=='home'){
+					this.$router.push({
+						name: 'Home',
+					})
+				}else{
+					this.$router.back()
+				}
+			},
 			onMore() {	
 				if(this.detaillist!=''){
 					this.page++
@@ -141,7 +159,8 @@
 					this.$router.push({
 						name: 'me',
 						query: {
-							address: address
+							address: address,
+							ispage:'shopdeil'
 						}
 					})
 				}else{
@@ -162,8 +181,10 @@
 							this.$toast('Please log in to little fox first')
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
-							//合约地址
+							//合约地址测试
 							const address = "0x1A3B441D42F733fbC55774456D62081CAd462c3C"
+							//正式
+							//const address = "0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731"
 							const myContract = new web3.eth.Contract(Abi, address)
 							myContract.methods.getOffShelfTime(this.detaillist.contract,this.detaillist.tokenId).call().then(
 							timesTamp => {
@@ -172,6 +193,7 @@
 								//当前时间戳与上架时间（秒）相比
 								console.log('from timesTamp :' + timesTamp, dataTime)
 								if (timesTamp * 1000 - dataTime > 0) {
+									console.log(timesTamp * 1000 - dataTime)
 									//商品未下架获取商品价格
 									//NFT上架价格
 									myContract.methods.getPrices(this.detaillist.contract,this.detaillist.tokenId).call().then(
@@ -204,6 +226,7 @@
 										})
 									
 								} else {
+									console.log(timesTamp * 1000 - dataTime)
 									this.$toast('The product has been taken off the shelf')
 								}
 							})
@@ -255,6 +278,9 @@
 	}
 </script>
 <style scoped>
+	.hasdata{
+		margin: 10px auto;
+	}
 	.nodata{
 		margin: 10px auto;
 		text-align: center;
@@ -298,15 +324,15 @@
 	}
 
 	.twocelll {
-		max-width: 330px;
+		max-width: 100%;
 		height: 20px;
 		font-size: 17px;
 		font-family: SourceHanSansCN-Medium, SourceHanSansCN;
 		font-weight: 500;
 		color: #333333;
-		overflow: hidden;
+		/* overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: nowrap; */
 		display: inline-block;	
 	}
 
@@ -318,13 +344,13 @@
 	.threecell {
 		width: 100%;
 	}
-.imgobject {
+	.imgobject {
 		object-fit: cover;
 		object-position: 50% 50%;
 	}
 	.threecell img {
 		width: 100%;
-		height: 300px;
+		/* height: 300px; */
 		margin: 0 auto;
 	}
 
@@ -435,7 +461,12 @@
 	.mycell {
 		background-color: #FFFFFF;
 	}
-
+.descriptionbox{
+	padding: 10px 20px;
+	background: #F7F7F7;
+	font-size: 12px;
+	color: #666666;
+}
 	.copyadd {
 		font-size: 12px;
 		color: #999999;

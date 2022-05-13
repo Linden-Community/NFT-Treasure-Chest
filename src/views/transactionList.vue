@@ -18,14 +18,15 @@
 					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 						@click="gotosell(item)">
 						<div class="oneboxl">
-							<img v-if="item.image==null" src="../assets/images/zw.png">
-							<img v-else :src="item.image" class="imgobject">
+							<!-- <img v-if="item.image==null" src="../assets/images/zw.png">
+							<img v-else :src="item.image" class="imgobject"> -->
+							<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 						</div>
 						<div class="oneboxr">
 							<div class="oneboxrt">
 								<span class="oneboxrtl oneboxrtname">{{item.title}}</span>
 								<span
-									class="oneboxrtr">Form：{{item.buyFrom==null?'itemcreator':item.buyFrom | ellipsis}}</span>
+									class="oneboxrtr">From：{{item.buyFrom==null?'itemcreator':item.buyFrom | ellipsis}}</span>
 							</div>
 							<div class="oneboxrc">
 								<span class="oneboxrtl">{{`#${item.tokenId}` | ellipsis}}</span>
@@ -43,8 +44,9 @@
 					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 						@click="gotosell(item)">
 						<div class="oneboxl">
-							<img v-if="item.image==null" src="../assets/images/zw.png">
-							<img v-else :src="item.image" class="imgobject">
+							<!-- <img v-if="item.image==null" src="../assets/images/zw.png">
+							<img v-else :src="item.image" class="imgobject"> -->
+							<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 						</div>
 						<div class="oneboxr">
 							<div class="oneboxrt">
@@ -117,9 +119,11 @@
 				this.page = 1
 				this.listRequest(this.index, this.myAddress)
 			},
-			onMore() {
-				this.page++
-				this.listRequest(this.index, this.myAddress)
+			onMore() {	
+				let times = setTimeout(() => {
+					this.page += 1 //每请求一次，页面数+1
+					this.listRequest(this.index, this.myAddress)
+				}, 500)
 			},
 			gotosell(item) {
 				if (this.index == 0) {
@@ -176,6 +180,8 @@
 							this.finished = true
 							this.finishedText = 'No more...'
 							return
+						}else {
+							this.finished = false;
 						}
 
 					} else {
@@ -224,7 +230,7 @@
 	}
 
 	.oneboxcell {
-		width: 350px;
+		width: 360px;
 		margin: 4px auto 8px auto;
 		height: 90px;
 		background: #FFFFFF;
@@ -232,11 +238,15 @@
 		border: .5px solid #D4D4D4;
 	}
 
-	.oneboxl img {
+	.boximg {
+		border-radius: 8px;
 		width: 72px;
 		height: 72px;
+		background-size: contain;
+		background-repeat: no-repeat;
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
-		border-radius: 8px;
+		background-position: center
+		
 	}
 
 	.imgobject {
@@ -254,7 +264,7 @@
 	}
 
 	.oneboxr {
-		width: 252px;
+		width: 262px;
 	}
 
 	.oneboxrc {
@@ -279,11 +289,13 @@
 	.oneboxrbr {
 		float: right;
 		display: inline-block;
+		text-align: right;
 	}
 
 	.oneboxrtl {
 		font-size: 13px;
 		color: #333333;
+		line-height: 14px;
 		vertical-align: top;
 	}
 

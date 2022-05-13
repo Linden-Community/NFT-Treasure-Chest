@@ -32,7 +32,8 @@
 			<div class="contenttwoth">
 				<div class="contenttwotho"><span>Mint quantity</span><span>1</span></div>
 				<div class="contenttwotht"><span>Blockchain</span><span>BNB</span></div>
-				<div class="mint" @click="mintBtn">Mint</div>
+				<div class="mint" @click="mintBtn" v-throttle="3000">Mint</div>
+				
 			</div>
 		</div>
 		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff" />
@@ -68,12 +69,11 @@
 				pageLoading: false,
 			}
 		},
-		mounted() {
-		},
+		mounted() {},
 		methods: {
 			checkEnter(e) {
 				var et = e || window.event;
-			 var keycode = et.charCode || et.keyCode;
+				var keycode = et.charCode || et.keyCode;
 				if (keycode == 13) {
 					if (window.event) {
 						window.event.returnValue = false;
@@ -156,7 +156,10 @@
 			safeMint(uri) {
 				const web3 = new this.Web3(window.web3.currentProvider)
 				//合约地址
+				//测试
 				const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
+				//正式
+				//const addressNFT = "0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823"
 				const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
 				this.pageLoading = true
 				myContractNft.methods.safeMint(sessionStorage.getItem("myAddress"), this.tokenId, uri)
@@ -170,7 +173,10 @@
 							//location.reload()
 							this.pageLoading = false
 							//跳转
-							this.$router.push('me')
+							setTimeout(() => {
+								this.$router.push('me')
+							}, 2000)
+
 						} else {
 							this.$toast(res.message)
 							console.log(res.message)
@@ -226,7 +232,7 @@
 	.divone {
 		margin-top: 12px;
 		width: 100%;
-		height: 150px;
+		/* height: 150px; */
 		background: rgba(59, 59, 59, 0.34);
 		border-radius: 5px;
 		box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.15);
@@ -235,7 +241,7 @@
 	.divonehas {
 		margin-top: 12px;
 		width: 100%;
-		height: 150px;
+		/* height: 150px; */
 		border-radius: 5px;
 		box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.15);
 	}
@@ -324,17 +330,17 @@
 	/deep/.van-uploader__upload {
 		background-color: transparent;
 		width: 100%;
-		height: 150px;
+		/* height: 150px; */
 	}
 
 	/deep/.van-uploader {
 		width: 100%;
-		height: 150px;
+		/* height: 150px; */
 	}
 
 	/deep/.van-uploader__preview-image {
 		width: 100%;
-		height: 150px;
+		height: 100%;
 	}
 
 	/deep/.van-uploader__preview {

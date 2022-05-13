@@ -12,7 +12,7 @@
 			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
-				<img v-else :src="detaillist.image" class="imgobject"/>
+				<img v-else :src="detaillist.image" />
 			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
@@ -61,6 +61,9 @@
 			</div>
 			<div class="contenttwote">
 				<van-collapse v-model="activeNames">
+					<van-collapse-item title="Introduction to the works" name="0" class='mycell'>
+						<div class="descriptionbox">{{detaillist.description==''?'No details yet':detaillist.description}}</div>
+					</van-collapse-item>
 					<van-collapse-item title="Details of the works" name="1" class='mycell'>
 						<van-cell title="Contract address">
 							<template #right-icon>
@@ -84,7 +87,7 @@
 				</van-collapse>
 			</div>
 		</div>
-		<div class="sell" @click="empower">Sell</div>
+		<div class="sell" @click="empower" v-throttle="3000">Sell</div>
 		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff"/>
 	</div>
 </template>
@@ -126,15 +129,21 @@
 				mydate: '1',
 				mychangedate: '',
 				shopid: '',
+				time: parseInt(new Date().getTime()/1000), //默认一天
 				mytime: parseInt(new Date().getTime()/1000)+87000, //默认一天
 				copyIds: '',
 				mytokenId: '',
 				pageLoading:false,
+				//测试
 				address:'0x1A3B441D42F733fbC55774456D62081CAd462c3C',
 				addressNFT:'0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd',
+				//正式
+				// address:'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731',
+				// addressNFT:'0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823',
 			}
 		},
 		mounted() {
+			// sessionStorage.setItem('shopdelpage', 'shopdelpage1')
 			this.shopid = this.$route.query.userId
 			this.detailNft(this.$route.query.userId) //商品详情
 			this.putdate() //获取处理时间
@@ -236,7 +245,6 @@
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//NFT合约地址
-							//const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
 							const myContractNft = new web3.eth.Contract(AbiNft, this.addressNFT)
 							//授权nft
 							this.mytokenId = BigNumber(this.detaillist.tokenId)
@@ -299,6 +307,10 @@
 							if (!res[0]) {
 								this.$toast('Please log in to little fox first')
 							} else {
+								console.log(parseInt(new Date().getTime()))
+								if(parseInt(new Date().getTime()/1000) - this.time>=600){
+									this.$toast("The page timed out！ Please refresh the current page")
+								}else{
 								const web3 = new this.Web3(window.web3.currentProvider)
 								//交易所合约地址
 								//const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
@@ -329,6 +341,7 @@
 										this.$toast(error.message)
 										console.log("上架error--->" + error.code, error.message)
 									})
+								}
 							}
 						})
 					} else {
@@ -388,15 +401,16 @@
 	}
 
 	.twocelll {
-		max-width: 330px;
+		max-width: 100%;
 		font-size: 18px;
 		font-family: SourceHanSansCN-Medium, SourceHanSansCN;
 		font-weight: 500;
 		color: #333333;
-		overflow: hidden;
+		/* overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: nowrap; */
 		display: inline-block;
+		padding: 5px 0;
 	}
 
 	.twocellr {
@@ -414,7 +428,7 @@
 
 	.threecell img {
 		width: 100%;
-		height: 300px;
+		/* height: 300px; */
 		margin: 0 auto;
 	}
 
@@ -511,7 +525,7 @@
 	}
 
 	.contenttwote {
-		padding: 0px 5px;
+		/* padding: 0px 5px; */
 	}
 
 	.contenttwotl {
@@ -530,7 +544,12 @@
 		font-size: 12px;
 		margin-top: 10px;
 	}
-
+.descriptionbox{
+	padding: 10px 20px;
+	background: #F7F7F7;
+	font-size: 12px;
+	color: #666666;
+}
 	.mycell {
 		/* background-color: #FFFFFF; */
 	}

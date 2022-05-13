@@ -20,7 +20,7 @@
 			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png"/>
-				<img v-else :src="detaillist.image" class="imgobject"/>
+				<img v-else :src="detaillist.image" />
 			</div>
 			<div class="fourcell">
 				<div class="fourcelll">
@@ -193,7 +193,7 @@
 
 	.threecell img {
 		width: 100%;
-		height: 300px;
+		/* height: 300px; */
 		margin: 0 auto;
 		box-shadow: 0px 2px 5px 5px rgba(0, 0, 0, 0.15);
 		border-radius: 5px;

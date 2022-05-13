@@ -24,8 +24,9 @@
 				<van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onMore" loading-text='Loading'>
 					<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item" @click="gotosell(item)">
 						<div class="oneboxl">
-							<img v-if="item.image==null" src="../assets/images/zw.png">
-							<img v-else :src="item.image" class="imgobject">
+							<!-- <img v-if="item.image==null" src="../assets/images/zw.png">
+							<img v-else :src="item.image" class="imgobject"> -->
+							<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 						</div>
 						<div class="oneboxr">
 							<div class="oneboxrt">
@@ -39,7 +40,7 @@
 							</div>
 							<div class="oneboxrb">
 								<span class="oneboxrbl">Purchase time</span>
-								<span class="oneboxrbr">{{item.offSheftTime}}</span>
+								<span class="oneboxrbr">{{item.offSheftTime!=null?item.offSheftTime.substring(0,16):''}}</span>
 							</div>
 							
 						</div>
@@ -73,7 +74,7 @@
 				finishedText: '',
 			}
 		},
-		mounted() {
+		created() {
 			this.myAddress = this.$route.query.address
 			this.listRequest(this.$route.query.address)
 		},
@@ -86,8 +87,10 @@
 				})
 			},
 			onMore() {
-				this.page++
-				this.listRequest(this.myAddress)
+				let times = setTimeout(() => {
+					this.page += 1 //每请求一次，页面数+1
+					this.listRequest(this.myAddress)
+				}, 500)
 			},
 			listRequest(address) {
 				const params = {
@@ -238,11 +241,14 @@
 		border: .5px solid #D4D4D4;
 	}
 
-	.oneboxl img {
+	.boximg {
+		border-radius: 8px;
 		width: 72px;
 		height: 72px;
+		background-size: contain;
+		background-repeat: no-repeat;
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
-		border-radius: 8px;
+		background-position: center
 	}
 .imgobject{
 		object-fit:cover;
@@ -303,6 +309,7 @@
 	.oneboxrbr {
 		font-size: 12px;
 		color: #666666;
+		vertical-align: top;
 	}
 	/deep/.van-nav-bar .van-icon{
 		color: #000000;

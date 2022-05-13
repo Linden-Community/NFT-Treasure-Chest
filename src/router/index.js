@@ -10,7 +10,8 @@ const routes = [{
 		component: Home,
 		meta: {
 			title: '首页',
-			isMenu: true
+			isMenu: true,
+			keepAlive: false,
 		}
 	},
 	{
@@ -19,7 +20,7 @@ const routes = [{
 		component: () => import('../views/coin.vue'),
 		meta: {
 			title: '我的',
-			isMenu: true
+			isMenu: true,
 		}
 	},
 	{
@@ -28,7 +29,8 @@ const routes = [{
 		component: () => import('../views/me.vue'),
 		meta: {
 			title: '我的',
-			isMenu: true
+			isMenu: true,
+			// keepAlive: true,
 		}
 	},
 	{
@@ -37,7 +39,8 @@ const routes = [{
 		component: () => import('../views/shopDetail.vue'),
 		meta: {
 			title: 'NFT details',
-			isMenu: true
+			isMenu: true,
+			//keepAlive: true,
 		}
 	},
 	{
@@ -46,8 +49,22 @@ const routes = [{
 		component: () => import('../views/search.vue'),
 		meta: {
 			title: 'search',
-			isMenu: true
-		}
+			isMenu: true,
+			keepAlive: true,
+		},
+		
+	},
+	{
+		path: '/searchmy',
+		name: 'searchmy',
+		component: () => import('../views/searchmy.vue'),
+		meta: {
+			title: 'search',
+			isMenu: true,
+			keepAlive: true,
+			isBack: false,
+		},
+		
 	},
 	{
 		path: '/sellDetail',

@@ -32,3 +32,18 @@ new Vue({
 Object.keys(filters).forEach(key=>{
   Vue.filter(key,filters[key])
 })
+router.afterEach((to,from,next) => {
+window.scrollTo(0,0);
+});
+Vue.directive('throttle',{
+  inserted(el,binding){
+    el.addEventListener('click',()=>{
+      el.style.pointerEvents='none';
+      if(!el.disabled){
+        setTimeout(()=>{
+          el.style.pointerEvents='auto'
+        },binding.value||300)
+      }
+    })
+  }
+})

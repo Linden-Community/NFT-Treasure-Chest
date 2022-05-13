@@ -3,15 +3,15 @@
 		<div class="contenttop">
 			<div class="contenttitle">
 				<span @click="search">
-					<van-icon name="search" size="20" />
+					<img src="../assets/images/search.png" />
 				</span>
 				<span>My list</span>
 				<span @click="buylist">
-					<van-icon name="orders-o" size="20" />
+					<img src="../assets/images/list.png" />
 				</span>
 			</div>
 			<div class="userInfobox">
-				<div class="userInfoboxl"><img src="../assets/images/icon1.png"></div>
+				<div class="userInfoboxl"><img src="../assets/images/logoicon.png"></div>
 				<div class="userInfoboxr">
 					<!-- <div class="userInfoboxrt">User name</div> -->
 					<div class="userInfoboxrb">
@@ -37,8 +37,9 @@
 								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 									@click="gotosell(item)">
 									<div class="oneboxl">
-										<img v-if="item.image==null" src="../assets/images/zw.png">
-										<img v-else :src="item.image" class="imgobject">
+										<!-- <img v-if="item.image==null" src="../assets/images/zw.png">
+										<img v-else :src="item.image" class="imgobject"> -->
+										<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
@@ -60,8 +61,9 @@
 								<div class="oneboxcell" v-for="(item,index) in sellList" :key='index' :title="item"
 									@click="gotosell(item)">
 									<div class="oneboxl">
-										<img v-if="item.image==null" src="../assets/images/zw.png">
-										<img v-else :src="item.image" class="imgobject">
+										<!-- <img v-if="item.image==null" src="../assets/images/zw.png">
+										<img v-else :src="item.image" class="imgobject"> -->
+										<div class="boximg" :style="{'background-image':'url('+item.image+')'}"></div>
 									</div>
 									<div class="oneboxr">
 										<div class="oneboxrt">
@@ -72,12 +74,13 @@
 										<div class="oneboxrc">
 											<span class="oneboxrtl">{{`#${item.tokenId}`}}</span>
 											<span class="oneboxrtr">
-												<img src="../assets/images/icon1.png" />
-												{{item.price==null?'0.00':item.price }}</span>
+												<img :src="sellList==''?'':require('../assets/images/icon1.png')" />
+												{{item.price==null?'':item.price }}</span>
 										</div>
 										<div class="oneboxrb">
-											<span class="oneboxrbl">End time</span>
-											<span class="oneboxrbr">{{item.offSheftTime!=null?item.offSheftTime.substring(0,16):''}}</span>
+											<span class="oneboxrbl">{{sellList==''?'':'End time'}}</span>
+											<span
+												class="oneboxrbr">{{item.offSheftTime!=null?item.offSheftTime.substring(0,16):''}}</span>
 										</div>
 									</div>
 								</div>
@@ -143,26 +146,45 @@
 				finishedText: '',
 				mytype: 0,
 				emptyflag: 0, //接口0调用前1调用后
-				index: 0,
+				index: '',
 			}
 		},
+		beforeRouteEnter(to, from, next) {
+			next(vm => { //  这里的vm指的就是vue实例，能够用来当作this使用
+				console.log(to)
+				console.log(from)
+				if (from.name == 'shopDetail' && from.query.ispage =='me') {
+					vm.active = 1
+				} else {
+					vm.active = 0
+				}	
+			})
+		},
 		mounted() {
-			//this.getAddress()
-			this.myAddress = sessionStorage.getItem("myAddress")
-			this.getSellNum(this.myAddress)
-			this.listRequest(0, this.myAddress)
-			let isshoppage = localStorage.getItem('shopdelpage')
-			if(isshoppage=='shopdelpage'){
-				this.active = 1
-			}else{
-				this.active = 0
-			}
-			localStorage.setItem('shopdelpage', '')
+			
+			
+		},
+		watch:{
+			active(active,activenew){
+				console.log(this.active)
+				if(this.active==1){
+					this.mytype = 1
+				}else{
+					this.mytype = 0
+				}
+				this.myAddress = sessionStorage.getItem("myAddress")
+				this.getSellNum(this.myAddress)
+				console.log(this.mytype,this.active,this.index)
+				this.listRequest(this.mytype, this.myAddress)
+			}	
 		},
 		methods: {
 			onMore() {
-				this.page++
-				this.listRequest(this.mytype, this.myAddress)
+				let times = setTimeout(() => {
+					this.page += 1 //每请求一次，页面数+1
+					this.listRequest(this.mytype, this.myAddress)
+					console.log(this.sellList,1111)
+				}, 500)
 			},
 			//复制
 			copyClick(txt) {
@@ -237,16 +259,17 @@
 							this.finished = true
 							this.finishedText = 'No more...'
 							return
-						}else {
+						} else {
 							this.finished = false;
 						}
-
+						console.log(this.sellList,1111)
 					} else {
 						this.$toast(res.message)
 					}
 				})
 			},
 			getInfo(id) {
+				this.active = id
 				this.page = 1
 				this.loading = true
 				this.finished = false
@@ -256,16 +279,13 @@
 				} else if (id == 1) {
 					this.mytype = 1
 					this.listRequest(1, this.myAddress)
-				} else if (id == 2) {
-					this.mytype = 3
-					this.listRequest(3, this.myAddress)
-				}
+				} 
 			},
 			search() {
 				this.$router.push({
-					name: 'search',
+					name: 'searchmy',
 					query: {
-						owneradd: this.myAddress
+						owneradd: this.myAddress,
 					}
 				})
 			},
@@ -278,7 +298,7 @@
 				})
 			},
 			gotosell(item) {
-				if (item.price == null && this.mytype == 0) {
+				if (item.price == null || this.mytype == 0) {
 					this.$router.push({
 						name: 'sellDetail',
 						query: {
@@ -289,7 +309,8 @@
 					this.$router.push({
 						name: 'shopDetail',
 						query: {
-							userId: item.id
+							userId: item.id,
+							ispage: 'me'
 						}
 					})
 				}
@@ -345,13 +366,18 @@
 	}
 
 	.contenttitle {
-		width: 100%;
+		/* width: 100%; */
 		height: 24px;
 		font-size: 18px;
 		color: #333333;
 		line-height: 24px;
-		padding: 36px 0 42px 0;
+		padding: 36px 20px 42px 20px;
 		text-align: center;
+	}
+
+	.contenttitle img {
+		width: 20px;
+		height: 20px;
 	}
 
 	.contenttitle span:nth-child(1) {
@@ -360,7 +386,7 @@
 
 	.contenttitle span {
 		justify-content: space-between;
-		width: 30%;
+		/* width: 30%; */
 		text-align: center;
 	}
 
@@ -452,11 +478,14 @@
 		object-position: 50% 50%;
 	}
 
-	.oneboxl img {
+	.boximg {
+		border-radius: 8px;
 		width: 72px;
 		height: 72px;
+		background-size: contain;
+		background-repeat: no-repeat;
 		box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1);
-		border-radius: 8px;
+		background-position: center
 	}
 
 	.oneboxl,
@@ -496,6 +525,7 @@
 
 	.oneboxrtl {
 		font-size: 13px;
+		line-height: 14px;
 		color: #333333;
 		vertical-align: top;
 	}
@@ -506,7 +536,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		display: inline-block;
-		height: 16px;
+
 	}
 
 	.oneboxrtr {
