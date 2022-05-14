@@ -32,8 +32,8 @@ push:
     - LindDensysHash=`ipfs add -rQ .`
     - rm -rf /opt/dist
     - echo ${LindDensysHash}
-    - mkdir /home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/lindenstorage/hash/
-    - echo ${LindDensysHash} >/home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/lindenstorage/hash/hash.html
+    - mkdir /home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/dapp/hash/
+    - echo ${LindDensysHash} >/home/gitlab-runner/builds/xxnsRf5H/0/na.na.fan/dapp/hash/hash.html
     - ipfs swarm connect /dnsaddr/cipfs.cn/p2p/12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc
     - ipfs ping 12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc -n 1
     - curl --location --request POST "http://csg.lindensys.cn/api/v0/name/publish?key=ex&arg=${LindDensysHash}"
