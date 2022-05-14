@@ -37,7 +37,7 @@ push:
     - ipfs swarm connect /dnsaddr/cipfs.cn/p2p/12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc
     - ipfs ping 12D3KooWAVSpTFJuX828VPB5WBaukbuZaBi8GjSLAEasebUptvsc -n 1
     - curl --location --request POST "http://csg.lindensys.cn/api/v0/name/publish?key=ex&arg=${LindDensysHash}"
-  artifacts:
-    name: post-hash
-    paths:
-      - ${CI_PROJECT_DIR}/hash/
+  #artifacts:
+  #  name: post-hash
+  #  paths:
+   #   - ${CI_PROJECT_DIR}/hash/
