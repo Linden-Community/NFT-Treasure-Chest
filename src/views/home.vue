@@ -61,7 +61,7 @@
 				shopImage: '',
 				shoplist: [],
 				page: 1,
-				num: 5,
+				num: 10,
 				loading: false,
 				finished: false,
 				finishedText: '',
@@ -100,7 +100,7 @@
 							this.shoplist = this.shoplist.concat(res.result.list)
 							//this.shoplist = [...this.shoplist, ...res.result.list]
 						}
-						if (res.result.list.length == 0 || res.result.list.length < 5) {
+						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
 							this.finishedText = 'No more...'
 						} else {
