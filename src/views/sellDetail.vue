@@ -91,7 +91,8 @@
 				</van-collapse>
 			</div>
 		</div>
-		<div class="sell" @click="empower" v-throttle="3000">Sell</div>
+		<!-- <div class="sell" @click="empower" v-throttle="3000">Sell</div> -->
+		<div class="sell" @click="sellsub" v-throttle="3000">Sell</div>
 		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff" />
 	</div>
 </template>
