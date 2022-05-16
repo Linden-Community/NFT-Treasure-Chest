@@ -8,7 +8,7 @@
 					@click="gootheraddress(detaillist.creator)"
 					class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
 			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span>
-				<!-- <span class="twocellr">#{{detaillist.tokenId}}</span> -->
+			<!-- <span class="twocellr">#{{detaillist.tokenId}}</span> -->
 			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
@@ -29,8 +29,7 @@
 					<div class="contenttwooot"><span class="contenttwoooto">Current price</span><span
 							class="contenttwooott">Fixed price</span></div>
 					<div class="contenttwooob">
-						<van-field v-model="amount" type="number" placeholder="Please enter the amount"
-							@change="inputchange" @blur='inputblur' maxlength="9" />
+						<van-field v-model="amount" type="number" placeholder="Please enter the amount" @change="inputchange" @blur='inputblur' maxlength="9"/>
 						<span class="coinCompany">BNB</span>
 					</div>
 				</div>
@@ -43,9 +42,7 @@
 					<div class="datatimebox" v-show="dateboxshow">
 						<div class="datatimeboxtt">
 							<span>Select shelf cycle</span>
-							<span @click="nochoosedate">
-								<van-icon name="cross" />
-							</span>
+							<span  @click="nochoosedate"><van-icon name="cross" /></span>	
 						</div>
 						<van-picker title="标题" :columns="columns" :default-index="0" @change="onChange" />
 						<div class="datatimeboxbf" @click="choosedatesub">Confirm</div>
@@ -65,8 +62,7 @@
 			<div class="contenttwote">
 				<van-collapse v-model="activeNames">
 					<van-collapse-item title="Introduction to the works" name="0" class='mycell'>
-						<div class="descriptionbox">
-							{{detaillist.description==''?'No details yet':detaillist.description}}</div>
+						<div class="descriptionbox">{{detaillist.description==''?'No details yet':detaillist.description}}</div>
 					</van-collapse-item>
 					<van-collapse-item title="Details of the works" name="1" class='mycell'>
 						<van-cell title="Contract address">
@@ -91,9 +87,8 @@
 				</van-collapse>
 			</div>
 		</div>
-		<!-- <div class="sell" @click="empower" v-throttle="3000">Sell</div> -->
-		<div class="sell" @click="sellsub" v-throttle="3000">Sell</div>
-		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff" />
+		<div class="sell" @click="empower" v-throttle="3000">Sell</div>
+		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" color="#0094ff"/>
 	</div>
 </template>
 <script>
@@ -108,16 +103,15 @@
 		Picker,
 		NavBar,
 		Loading,
-		Dialog
+		Dialog 
 	} from 'vant'
-	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Field).use(CellGroup).use(Icon).use(Picker).use(NavBar).use(Loading)
-		.use(Dialog)
+	Vue.use(Collapse).use(CollapseItem).use(Cell).use(Field).use(CellGroup).use(Icon).use(Picker).use(NavBar).use(Loading).use(Dialog)
 	import {
 		getNft
 	} from "../api";
 	import Abi from '../json/Abi.js'
 	import AbiNft from '../json/AbiNft.js'
-	import BigNumber from "bignumber.js";
+	//import BigNumber from "bignumber.js";
 	import {
 		addDate
 	} from '../api/date.js'
@@ -125,7 +119,7 @@
 		data() {
 			return {
 				activeNames: [0],
-				amount: '',
+				amount:'',
 				detaillist: [],
 				tipboxshow: false,
 				minDate: new Date(2010, 0, 1),
@@ -135,14 +129,14 @@
 				mydate: '1',
 				mychangedate: '',
 				shopid: '',
-				time: parseInt(new Date().getTime() / 1000), //默认一天
-				mytime: parseInt(new Date().getTime() / 1000) + 87000, //默认一天
+				time: parseInt(new Date().getTime()/1000), //默认一天
+				mytime: parseInt(new Date().getTime()/1000)+87000, //默认一天
 				copyIds: '',
 				mytokenId: '',
-				pageLoading: false,
+				pageLoading:false,
 				//测试
-				address: '0x1A3B441D42F733fbC55774456D62081CAd462c3C',
-				addressNFT: '0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd',
+				address:'0x1A3B441D42F733fbC55774456D62081CAd462c3C',
+				addressNFT:'0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd',
 				//正式
 				// address:'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731',
 				// addressNFT:'0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823',
@@ -155,29 +149,29 @@
 			this.putdate() //获取处理时间
 			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(1)) +
 				' ( 1 Day ) ' //默认时间
-
+	
 		},
-		methods: {
-			inputblur() {
-				if (this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
+		methods: {	
+			inputblur(){
+				if(this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
 					this.$toast('Please enter a number between 0.0001-9999.9999')
 				}
 			},
 			inputchange(e) {
 				var val = e.target.value
 				//不能出现001等
-				val = val.replace(/^0+\./g, '0.');
-				val = val.match(/^0+[1-9]+/) ? val = val.replace(/^0+/g, '') : val;
+				val = val.replace(/^0+\./g,'0.');
+				val = val.match(/^0+[1-9]+/)?val=val.replace(/^0+/g,''):val;
 				//先把非数字的都替换掉，除了数字和.
-				val = val.replace(/[^\d.]/g, "");
-				//保证只有出现一个.而没有多个.
-				val = val.replace(/\.{2,}/g, ".");
-				//必须保证第一个为数字而不是.
-				val = val.replace(/^\./g, "");
-				//保证.只出现一次，而不能出现两次以上
-				val = val.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
-				//只能输入两个小数
-				val = val.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/, '$1$2.$3');
+				val = val.replace(/[^\d.]/g,"");
+			    //保证只有出现一个.而没有多个.
+			    val = val.replace(/\.{2,}/g,".");
+			    //必须保证第一个为数字而不是.
+			    val = val.replace(/^\./g,"");
+			    //保证.只出现一次，而不能出现两次以上
+			    val = val.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+			    //只能输入两个小数
+			    val = val.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3');
 				this.amount = val
 			},
 			gootheraddress(address) {
@@ -213,10 +207,10 @@
 			onChange(value, index) {
 				this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + index.split(' ')[4] + ' (' + index.split(' ')[
 					0] + index.split(' ')[1] + ')'
-				this.mytime = parseInt(new Date().getTime() / 1000) + index.split(' ')[0] * 24 * 60 * 60 + 600
+				this.mytime = parseInt(new Date().getTime()/1000) + index.split(' ')[0] * 24 * 60 * 60+600
 				console.log(`当前值: ${value}, 当前索引: ${index}`, this.mytime);
 			},
-			nochoosedate() {
+			nochoosedate(){
 				this.dateboxshow = false
 			},
 			//时间选择按钮
@@ -232,7 +226,7 @@
 					if (res.code == "200") {
 						this.detaillist = res.result
 						this.copyIds = res.result.tokenId
-						this.amount = res.result.price == '' ? '' : res.result.price
+						this.amount = res.result.price==''?'':res.result.price
 						//this.empower()
 					} else {
 						this.$toast(res.message)
@@ -241,117 +235,112 @@
 			},
 			//授权
 			empower() {
-				if (this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
+				if(this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
 					this.$toast('Please enter a number between 0.0001-9999.9999')
+				}else{
+				if (window.ethereum) {
+					window.ethereum.enable().then((res) => {
+						if (!res[0]) {
+							this.$toast('Please log in to little fox first')
+						} else {
+							const web3 = new this.Web3(window.web3.currentProvider)
+							//NFT合约地址
+							const myContractNft = new web3.eth.Contract(AbiNft, this.addressNFT)
+							//授权nft
+							//this.mytokenId = BigNumber(this.detaillist.tokenId)
+							myContractNft.methods.getApproved(this.detaillist.tokenId).call().then(
+								approve => {
+									console.log('from approve :' + approve)
+									if(approve!==this.address){
+										this.pageLoading = true
+										myContractNft.methods.approve(this.address, this.detaillist.tokenId)
+											.send({
+												from: res[0]
+											}).then(res => {
+												console.log('from res :' + res)
+												if (JSON.stringify(res.status) == 'true') {
+													Dialog.alert({
+														message: 'Authorization is successful！ Please upload',
+														theme: 'round-button',
+														confirmButtonText:'Listed',
+														confirmButtonColor:'#FADD5C',
+														width:'200'
+													}).then(() => {
+													  // on close
+													  //this.$toast('Authorization succeeded')
+													  console.log("success")
+													  //刷新页面
+													  //location.reload()
+													  this.pageLoading = false
+													  this.sellsub()
+													});
+													
+												} else {
+													this.$toast(res.message)
+													console.log(res.message)
+												}
+											}).catch((error) => {
+												this.pageLoading = false
+												this.$toast(error.message)
+												console.log("授权error--->" + error.code, error.message)
+											})
+									}else{
+										console.log(11)
+										this.sellsub()
+									}
+								})
+	
+						}
+					})
 				} else {
-					if (window.ethereum) {
-						window.ethereum.enable().then((res) => {
-							if (!res[0]) {
-								this.$toast('Please log in to little fox first')
-							} else {
-								const web3 = new this.Web3(window.web3.currentProvider)
-								//NFT合约地址
-								const myContractNft = new web3.eth.Contract(AbiNft, this.addressNFT)
-								//授权nft
-								console.log("string:", this.detaillist.tokenId)
-								this.mytokenId = BigNumber(this.detaillist.tokenId)
-								console.log("bigNumber:", this.mytokenId)
-								// myContractNft.methods.getApproved(this.mytokenId).call().then(
-								// 	approve => {
-								// 		console.log('from approve :' + approve)
-								//	if (approve !== this.address) {
-											this.pageLoading = true
-											myContractNft.methods.approve(this.address, this.mytokenId)
-												.send({
-													from: res[0]
-												}).then(res => {
-													console.log('from res :' + res)
-													if (JSON.stringify(res.status) == 'true') {
-														Dialog.alert({
-															message: 'Authorization is successful！ Please upload',
-															theme: 'round-button',
-															confirmButtonText: 'Listed',
-															confirmButtonColor: '#FADD5C',
-															width: '200'
-														}).then(() => {
-															// on close
-															//this.$toast('Authorization succeeded')
-															console.log("success")
-															//刷新页面
-															//location.reload()
-															this.pageLoading = false
-															this.sellsub()
-														});
-
-													} else {
-														this.$toast(res.message)
-														console.log(res.message)
-													}
-												}).catch((error) => {
-													this.pageLoading = false
-													this.$toast(error.message)
-													console.log("授权error--->" + error.code, error.message)
-												})
-									// 	} else {
-									// 		console.log(11)
-									// 		this.sellsub()
-									// 	}
-									// })
-
-							}
-						})
-					} else {
-						this.$toast('Please install metamask before the browser can be used.');
-					}
+					this.$toast('Please install metamask before the browser can be used.');
+				}
 				}
 			},
 			//上架
 			sellsub() {
 				if (this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
 					this.$toast('Please enter a number between 0.0001-9999.9999')
-				} else {
+				}else  {
 					if (window.ethereum) {
 						window.ethereum.enable().then((res) => {
 							if (!res[0]) {
 								this.$toast('Please log in to little fox first')
 							} else {
 								console.log(parseInt(new Date().getTime()))
-								if (parseInt(new Date().getTime() / 1000) - this.time >= 600) {
+								if(parseInt(new Date().getTime()/1000) - this.time>=600){
 									this.$toast("The page timed out！ Please refresh the current page")
-								} else {
-									const web3 = new this.Web3(window.web3.currentProvider)
-									//交易所合约地址
-									//const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
-									const myContract = new web3.eth.Contract(Abi, this.address)
-									//授权nft
-									this.mytokenId = BigNumber(this.detaillist.tokenId)
-									this.pageLoading = true
-									//上架NFT商品（商品id 金额 时间）
-									console.log(this.amount.toString(), 11111)
-									//this.amount = web3.utils.toWei(this.amount,'ether')
-									console.log(this.amount, 2222)
-									// this.amount = BigNumber(this.amount)
-									// console.log(this.amount, 3333)
-									myContract.methods.sell(this.detaillist.contract, this.detaillist.tokenId,web3.utils.toWei(this.amount,'ether'),this.mytime)
-										.send({
-											from: res[0]
-										}).then(res => {
-											console.log('from res :' + res)
-											if (JSON.stringify(res.status) == 'true') {
-												this.$toast('Successful launch')
-												console.log("success")
-												this.pageLoading = false
-												//跳转页面
-												this.$router.push('/')
-											} else {
-												this.$toast(res.message)
-												console.log(res.message)
-											}
-										}).catch((error) => {
+								}else{
+								const web3 = new this.Web3(window.web3.currentProvider)
+								//交易所合约地址
+								//const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
+								const myContract = new web3.eth.Contract(Abi, this.address)
+								//授权nft
+								//this.mytokenId = BigNumber(this.detaillist.tokenId)
+								this.pageLoading = true
+								//上架NFT商品（商品id 金额 时间）
+								myContract.methods.sell(this.detaillist.contract,this.detaillist.tokenId, web3.utils.toWei(this.amount,
+											'ether'),
+										this.mytime)
+									.send({
+										from: res[0]
+									}).then(res => {
+										console.log('from res :' + res)
+										if (JSON.stringify(res.status) == 'true') {
+											this.$toast('Successful launch')
+											console.log("success")
 											this.pageLoading = false
-											this.$toast(error.message)
-											console.log("上架error--->" + error.code, error.message)
-										})
+											//跳转页面
+											this.$router.push('/') 
+										} else {
+											this.$toast(res.message)
+											console.log(res.message)
+										}
+									}).catch((error) => {
+										this.pageLoading = false
+										this.$toast(error.message)
+										console.log("上架error--->" + error.code, error.message)
+									})
 								}
 							}
 						})
@@ -432,10 +421,9 @@
 	.threecell {
 		width: 100%;
 	}
-
-	.imgobject {
-		object-fit: cover;
-		object-position: 50% 50%;
+	.imgobject{
+		object-fit:cover;
+		object-position:50% 50%;
 	}
 
 	.threecell img {
@@ -556,14 +544,12 @@
 		font-size: 12px;
 		margin-top: 10px;
 	}
-
-	.descriptionbox {
-		padding: 10px 20px;
-		background: #F7F7F7;
-		font-size: 12px;
-		color: #666666;
-	}
-
+.descriptionbox{
+	padding: 10px 20px;
+	background: #F7F7F7;
+	font-size: 12px;
+	color: #666666;
+}
 	.mycell {
 		/* background-color: #FFFFFF; */
 	}
@@ -662,20 +648,18 @@
 		height: 16px;
 		margin-top: 5px;
 	}
-
-	.datatimeboxtt {
+	.datatimeboxtt{
 		margin: 20px 0;
 	}
 
-	.datatimeboxtt span:nth-child(1) {
+	.datatimeboxtt span:nth-child(1){
 		font-size: 20px;
 		color: #333333
 	}
-
-	.datatimeboxtt span:nth-child(2) {
+		
+	.datatimeboxtt span:nth-child(2){
 		float: right;
 	}
-
 	.datatimeboxbf {
 		background: #FADD5C;
 		width: 180px;
@@ -699,14 +683,12 @@
 		font-size: 13px;
 		color: #000000;
 	}
-
-	.loadingbox {
+	.loadingbox{
 		width: 100%;
 		position: fixed;
-		top: 50%;
+		top:50%;
 		text-align: center;
 	}
-
 	/deep/.van-nav-bar .van-icon {
 		color: #000000;
 	}
