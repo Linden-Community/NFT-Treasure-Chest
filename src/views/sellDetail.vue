@@ -328,7 +328,7 @@
 									this.pageLoading = true
 									//上架NFT商品（商品id 金额 时间）
 									console.log(this.amount.toString(), 11111)
-									myContract.methods.sell(this.detaillist.contract, this.mytokenId,
+									myContract.methods.sell(this.detaillist.contract, this.detaillist.tokenId,
 											BigNumber(web3.utils.toWei(this.amount.toString(),
 												'ether')),
 											this.mytime)
