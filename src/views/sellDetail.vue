@@ -247,13 +247,13 @@
 							//NFT合约地址
 							const myContractNft = new web3.eth.Contract(AbiNft, this.addressNFT)
 							//授权nft
-							this.mytokenId = new BigNumber(this.detaillist.tokenId)
-							myContractNft.methods.getApproved(this.mytokenId).call().then(
+							//this.mytokenId = BigNumber(this.detaillist.tokenId)
+							myContractNft.methods.getApproved(this.detaillist.tokenId).call().then(
 								approve => {
 									console.log('from approve :' + approve)
 									if(approve!==this.address){
 										this.pageLoading = true
-										myContractNft.methods.approve(this.address, this.mytokenId)
+										myContractNft.methods.approve(this.address, this.detaillist.tokenId)
 											.send({
 												from: res[0]
 											}).then(res => {
@@ -316,10 +316,10 @@
 								//const address = "0x0e0eb3Aac0FDCb5Cff2F92d7E5D632224F7EC29c"
 								const myContract = new web3.eth.Contract(Abi, this.address)
 								//授权nft
-								this.mytokenId =new BigNumber(this.detaillist.tokenId)
+								//this.mytokenId = BigNumber(this.detaillist.tokenId)
 								this.pageLoading = true
 								//上架NFT商品（商品id 金额 时间）
-								myContract.methods.sell(this.detaillist.contract,this.mytokenId, BigNumber(web3.utils.toWei(this.amount.toString(),
+								myContract.methods.sell(this.detaillist.contract,this.detaillist.tokenId, BigNumber(web3.utils.toWei(this.amount.toString(),
 											'ether')),
 										this.mytime)
 									.send({
