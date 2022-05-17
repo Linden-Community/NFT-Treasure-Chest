@@ -150,6 +150,7 @@
 			}
 		},
 		created() {
+			console.log(this.$store.state.choosenetwork,localStorage.getItem('switchNetwork'))
 			this.listRequest()
 			this.empower() //授权账户
 		},
