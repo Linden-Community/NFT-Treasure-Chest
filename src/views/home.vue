@@ -44,9 +44,6 @@
 			</van-list>
 			<van-action-sheet v-model:show="isshowpop" title="Network switching">
 				<div class="menulistbox">
-					<!-- <van-dropdown-menu active-color="#1989fa">
-				  	 <van-dropdown-item :title="switchTitle" v-model="switchVal" :options="option1" @change="changemenu"/>
-				  </van-dropdown-menu> -->
 					<span class="menutitle">Mainnet</span>
 					<div class="menulist" v-for="(item,index) in option1" @click="choose(item,index,1)">
 						<img :src="item.image"/>
@@ -171,17 +168,10 @@
 				}
 				console.log(this.$myContent.choosenetwork,222)
 			},
-			//切换链地址
-			// changemenu(value) {
-			// 	this.switchTitle = this.option1.filter(item => item.value === this.option1.value).text
-			// 	this.switchVal = value
-			// 	console.log(this.switchVal)
-			// },
-
 			onMore() {
 				let times = setTimeout(() => {
 					this.page += 1 //每请求一次，页面数+1
-					//this.listRequest()
+					this.listRequest()
 				}, 3000)
 			},
 			//nft列表
@@ -189,6 +179,7 @@
 				const params = {
 					pageNo: this.page,
 					pageSize: this.num,
+					//chainId:this.$myContent.choosenetwork,
 				}
 				this.emptyflag = 0
 				listNft(params).then(res => {
