@@ -2,6 +2,13 @@
 	<div class="wrap">
 		<div class="headerbox">
 			<van-nav-bar title="List of NFT" @click-right="onClickRight">
+				<template #left>
+					<div class="navbarleft" @click="isshowmenu">
+						<img src="../assets/images/navleft.png" />
+						<span>{{switchTitle}}</span>
+						<van-icon name="arrow-down" size="14" />
+					</div>
+				</template>
 				<template #right>
 					<van-icon name="search" size="25" />
 				</template>
@@ -35,6 +42,26 @@
 					</div>
 				</div>
 			</van-list>
+			<van-action-sheet v-model:show="isshowpop" title="Network switching">
+				<div class="menulistbox">
+					<!-- <van-dropdown-menu active-color="#1989fa">
+				  	 <van-dropdown-item :title="switchTitle" v-model="switchVal" :options="option1" @change="changemenu"/>
+				  </van-dropdown-menu> -->
+					<span class="menutitle">Mainnet</span>
+					<div class="menulist" v-for="(item,index) in option1" @click="choose(item,index,1)">
+						<img :src="item.image"/>
+						<span :class="index!=0?'nochoose':'choose'">{{item.text}}</span>
+						<img :class="choosebtn==1&& index==0?'rightchoose':'rightchooseno'" src="../assets/images/choose.png"/>
+					</div>
+					<span class="menutitle">Testnet</span>
+					<div class="menulist" v-for="(item,index) in option2"  @click="choose(item,index,2)">
+						<img :src="item.image"/>
+						<span :class="index!=0?'nochoose':'choose'">{{item.text}}</span>
+						<img :class="index==0 && choosebtn==2?'rightchoose':'rightchooseno'" src="../assets/images/choose.png"/>
+					</div>
+				</div>
+			</van-action-sheet>
+
 		</div>
 		<foot-bar v-if="$route.meta.isMenu"></foot-bar>
 	</div>
@@ -47,9 +74,12 @@
 	import {
 		NavBar,
 		Icon,
-		List
+		List,
+		DropdownMenu,
+		DropdownItem,
+		ActionSheet,
 	} from 'vant'
-	Vue.use(NavBar).use(Icon).use(List)
+	Vue.use(NavBar).use(Icon).use(List).use(DropdownMenu).use(DropdownItem).use(ActionSheet)
 	import {
 		getShopDetail,
 		listNft
@@ -66,21 +96,92 @@
 				finished: false,
 				finishedText: '',
 				emptyflag: 0, //接口0调用前1调用后
+				isshowpop: false,
+				option1: [{
+						text: 'BSC Mainet',
+						value: 56,
+						image:require('../assets/images/navleft.png'),
+						id:0,
+					},
+					{
+						text: 'Ethereum Mainnet',
+						value: 0,
+						image:require('../assets/images/icon2.png'),
+						id:1,
+					},
+					{
+						text: 'Filecoin Mainnet',
+						value: 0,
+						image:require('../assets/images/icon3.png'),
+						id:2,
+					},
+					{
+						text: 'Polygon Mainnet',
+						value: 0,
+						image:require('../assets/images/icon4.png'),
+						id:3,
+					},
+				],
+				option2: [{
+						text: 'BSC Testnet',
+						value: 97,
+						image:require('../assets/images/navleft.png')
+					},
+					{
+						text: 'Rinkeby',
+						value: 0,
+						image:require('../assets/images/icon2.png')
+					},
+					{
+						text: 'Filecoin Testnet',
+						value: 0,
+						image:require('../assets/images/icon3.png')
+					},
+					{
+						text: 'Mumbai',
+						value: 0,
+						image:require('../assets/images/icon4.png')
+					},
+				],
+				switchTitle: 'BSC Mainet',
+				switchVal: 56,
+				choosebtn:1
+
 			}
 		},
 		created() {
-			// this.page = 1
-			// console.log(this.page)
-			// this.shoplist = []
 			this.listRequest()
 			this.empower() //授权账户
 		},
 		methods: {
+			isshowmenu() {
+				this.isshowpop = true
+			},
+			choose(item,index,type){
+				console.log(this.$myContent.choosenetwork,222)
+				this.choosebtn=type
+				if(type==1&&index==0){
+					this.switchTitle = item.text
+					this.switchVal = item.value
+					this.$myContent.setNetwork(item.value);
+				}else if(type==2&&index==0){
+					this.switchTitle = item.text
+					this.switchVal = item.value
+					this.$myContent.setNetwork(item.value);
+				}
+				console.log(this.$myContent.choosenetwork,222)
+			},
+			//切换链地址
+			// changemenu(value) {
+			// 	this.switchTitle = this.option1.filter(item => item.value === this.option1.value).text
+			// 	this.switchVal = value
+			// 	console.log(this.switchVal)
+			// },
+
 			onMore() {
-				console.log(this.shoplist, this.page, 2)
 				let times = setTimeout(() => {
 					this.page += 1 //每请求一次，页面数+1
-					this.listRequest()
+					//this.listRequest()
 				}, 3000)
 			},
 			//nft列表
@@ -171,6 +272,61 @@
 		z-index: 9999;
 	}
 
+	.navbarleft img {
+		width: 15px;
+		height: 15px;
+		vertical-align: middle;
+	}
+
+	.navbarleft span {
+		font-size: 11px;
+		color: #333333;
+		line-height: 33px;
+		vertical-align: middle;
+		margin: 0 2px;
+	}
+
+	/deep/.van-icon-arrow-down::before {
+		margin-top: 2px;
+		vertical-align: top;
+	}
+.menulistbox{
+	margin: 16px;
+}
+.menutitle{
+	font-size: 12px;
+	color: #666666;
+	line-height: 36px;
+}
+.menulist img{
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+}
+.rightchoose {
+	float: right;
+	vertical-align: top;
+	margin-top: 5px;
+}
+.rightchooseno{
+	display: none;
+}
+.choose{
+	font-size: 13px;
+	font-weight: bold;
+	color: #333333;
+	line-height: 39px;
+	vertical-align: middle;
+	margin-left: 5px;
+}
+.nochoose{
+	font-size: 13px;
+	font-weight: 400;
+	color: #666666;
+	line-height: 39px;
+	vertical-align: middle;
+	margin-left: 5px;
+}
 	.nolist {
 		background: #F7F7F7;
 		width: 100%;
@@ -289,5 +445,17 @@
 
 	/deep/.van-nav-bar .van-icon {
 		color: #000000;
+	}
+
+	/deep/.van-dropdown-menu__bar {
+		box-shadow: none;
+	}
+	/deep/.van-popup--bottom{
+		width: 96%;
+		left: 2%;
+		margin: 0 auto;
+	}
+	/deep/.van-overlay{
+		background: rgba(4, 4, 4, 0.21);
 	}
 </style>

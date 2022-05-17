@@ -136,7 +136,7 @@
 				pageLoading:false,
 				//测试
 				address:'0x1A3B441D42F733fbC55774456D62081CAd462c3C',
-				addressNFT:'0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd',
+				addressNFT:'',
 				//正式
 				// address:'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731',
 				// addressNFT:'0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823',
@@ -149,7 +149,7 @@
 			this.putdate() //获取处理时间
 			this.mychangedate = addDate(new Date, parseInt(0)) + ' - ' + addDate(new Date, parseInt(1)) +
 				' ( 1 Day ) ' //默认时间
-	
+			
 		},
 		methods: {	
 			inputblur(){
@@ -227,6 +227,8 @@
 						this.detaillist = res.result
 						this.copyIds = res.result.tokenId
 						this.amount = res.result.price==''?'':res.result.price
+						this.addressNFT = this.detaillist.contract
+						console.log(this.addressNFT,1222)
 						//this.empower()
 					} else {
 						this.$toast(res.message)
@@ -281,7 +283,7 @@
 												}
 											}).catch((error) => {
 												this.pageLoading = false
-												this.$toast(error.message)
+												//this.$toast(error.message)
 												console.log("授权error--->" + error.code, error.message)
 											})
 									}else{
@@ -338,7 +340,7 @@
 										}
 									}).catch((error) => {
 										this.pageLoading = false
-										this.$toast(error.message)
+										//this.$toast(error.message)
 										console.log("上架error--->" + error.code, error.message)
 									})
 								}

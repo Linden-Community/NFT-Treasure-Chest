@@ -151,8 +151,6 @@
 		},
 		beforeRouteEnter(to, from, next) {
 			next(vm => { //  这里的vm指的就是vue实例，能够用来当作this使用
-				console.log(to)
-				console.log(from)
 				if (from.name == 'shopDetail' && from.query.ispage =='me') {
 					vm.active = 1
 				} else {
@@ -166,7 +164,6 @@
 		},
 		watch:{
 			active(active,activenew){
-				console.log(this.active)
 				if(this.active==1){
 					this.mytype = 1
 				}else{
@@ -174,7 +171,6 @@
 				}
 				this.myAddress = sessionStorage.getItem("myAddress")
 				this.getSellNum(this.myAddress)
-				console.log(this.mytype,this.active,this.index)
 				this.listRequest(this.mytype, this.myAddress)
 			}	
 		},
@@ -183,7 +179,6 @@
 				let times = setTimeout(() => {
 					this.page += 1 //每请求一次，页面数+1
 					this.listRequest(this.mytype, this.myAddress)
-					console.log(this.sellList,1111)
 				}, 500)
 			},
 			//复制

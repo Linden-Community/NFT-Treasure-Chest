@@ -221,7 +221,7 @@
 												}
 											}).catch((error) => {
 												this.pageLoading = false
-												this.$toast(error.message)
+												//this.$toast(error.message)
 											})
 										})
 									
