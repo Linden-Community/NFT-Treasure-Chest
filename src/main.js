@@ -8,10 +8,8 @@ import axios from 'axios'
 import filters from "./api/filter.js"
 import VueClipboard from 'vue-clipboard2'
 import '@/assets/css/reset.css'
-import content from './api/content.js';
 
 Vue.config.productionTip = false
-Vue.prototype.$myContent = content;
 Vue.prototype.Web3 = Web3
 Vue.prototype.$http = axios
 Vue.use(utils)

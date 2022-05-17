@@ -208,6 +208,7 @@
 			getSellNum(address) {
 				const params = {
 					owner: address,
+					chainId:this.$store.state.choosenetwork,
 				}
 				listSellNum(params).then(res => {
 					if (res.code == '200') {
@@ -227,6 +228,7 @@
 					pageSize: this.num,
 					owner: address,
 					type: listtype,
+					chainId:this.$store.state.choosenetwork,
 				}
 				this.emptyflag = 0
 				listSell(params).then(res => {

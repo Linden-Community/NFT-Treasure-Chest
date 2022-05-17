@@ -135,6 +135,7 @@
 					pageSize: this.num,
 					search: this.searchkey,
 					owner: owner,
+					chainId:this.$store.state.choosenetwork,
 				}
 				getSearch(params).then(res => {
 					if (res.code == '200') {

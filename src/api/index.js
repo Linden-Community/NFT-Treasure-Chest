@@ -5,23 +5,23 @@ const request = new HttpRequest()
 export const getShopDetail = (params) => request.get(
 	'/ipns/k51qzi5uqu5divqrok0get110odatax0tv8uqh3forzp1zhoxy7ft7cua188gt/babaofan', params)
 //我的上架列表
-export const listSell = (params) => request.post('/metadataserver/msNft/listSell',params)
+export const listSell = (params) => request.post('/msNft/listSell',params)
 //我的页面列表数据和
-export const listSellNum = (params) => request.post('/metadataserver/msNft/numSell',params)
+export const listSellNum = (params) => request.post('/msNft/numSell',params)
 
 //我的上架列表
-export const listLog = (params) => request.post('/metadataserver/msBuy/listBuy',params)
+export const listLog = (params) => request.post('/msBuy/listBuy',params)
 
 //首页nft列表
-export const listNft = (params) => request.post('/metadataserver/msNft/listNft',params)
+export const listNft = (params) => request.post('/msNft/listNft',params)
 
-export const getNft = (params) => request.post('/metadataserver/msNft/getNft',params)
+export const getNft = (params) => request.post('/msNft/getNft',params)
 
 //搜索接口
-export const getSearch = (params) => request.post('/metadataserver/msNft/search',params)
+export const getSearch = (params) => request.post('/msNft/search',params)
 
 //铸币页面
-export const setCoin = (params) => request.post('/metadataserver/metadataV2',params)
+export const setCoin = (params) => request.post('/metadataV2',params)
 
 //交易列表
-export const transactionList = (params) => request.post('/metadataserver/msBuy/listNftRecord',params)
+export const transactionList = (params) => request.post('/msBuy/listNftRecord',params)

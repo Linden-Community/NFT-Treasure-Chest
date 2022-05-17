@@ -134,12 +134,8 @@
 				copyIds: '',
 				mytokenId: '',
 				pageLoading:false,
-				//测试
-				address:'0x1A3B441D42F733fbC55774456D62081CAd462c3C',
+				address:this.$store.state.choosenetwork=='56'?'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731':'0x1A3B441D42F733fbC55774456D62081CAd462c3C',
 				addressNFT:'',
-				//正式
-				// address:'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731',
-				// addressNFT:'0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823',
 			}
 		},
 		mounted() {
@@ -228,7 +224,6 @@
 						this.copyIds = res.result.tokenId
 						this.amount = res.result.price==''?'':res.result.price
 						this.addressNFT = this.detaillist.contract
-						console.log(this.addressNFT,1222)
 						//this.empower()
 					} else {
 						this.$toast(res.message)

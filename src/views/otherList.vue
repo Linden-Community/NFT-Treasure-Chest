@@ -98,6 +98,7 @@
 					pageSize: this.num,
 					owner: address,
 					type: 1,
+					chainId:this.$store.state.choosenetwork,
 				}
 				listSell(params).then(res => {
 					if (res.code == '200') {						

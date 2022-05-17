@@ -42,24 +42,23 @@
 					</div>
 				</div>
 			</van-list>
-			<van-action-sheet v-model:show="isshowpop" title="Network switching">
-				<div class="menulistbox">
-					<span class="menutitle">Mainnet</span>
-					<div class="menulist" v-for="(item,index) in option1" @click="choose(item,index,1)">
-						<img :src="item.image"/>
-						<span :class="index!=0?'nochoose':'choose'">{{item.text}}</span>
-						<img :class="choosebtn==1&& index==0?'rightchoose':'rightchooseno'" src="../assets/images/choose.png"/>
-					</div>
-					<span class="menutitle">Testnet</span>
-					<div class="menulist" v-for="(item,index) in option2"  @click="choose(item,index,2)">
-						<img :src="item.image"/>
-						<span :class="index!=0?'nochoose':'choose'">{{item.text}}</span>
-						<img :class="index==0 && choosebtn==2?'rightchoose':'rightchooseno'" src="../assets/images/choose.png"/>
-					</div>
-				</div>
-			</van-action-sheet>
-
 		</div>
+		<van-action-sheet v-model:show="isshowpop" title="Network switching">
+			<div class="menulistbox">
+				<span class="menutitle">Mainnet</span>
+				<div class="menulist" v-for="(item,index) in option1" @click="choose(item,index,1)">
+					<img :src="item.image"/>
+					<span :class="index!=0?'nochoose':'choose'">{{item.text}}</span>
+					<img :class="switchVal==item.value && index==0?'rightchoose':'rightchooseno'" src="../assets/images/choose.png"/>
+				</div>
+				<span class="menutitle">Testnet</span>
+				<div class="menulist" v-for="(item,index) in option2"  @click="choose(item,index,2)">
+					<img :src="item.image"/>
+					<span :class="index!=0?'nochoose':'choose'">{{item.text}}</span>
+					<img :class="switchVal==item.value && index==0?'rightchoose':'rightchooseno'" src="../assets/images/choose.png"/>
+				</div>
+			</div>
+		</van-action-sheet>
 		<foot-bar v-if="$route.meta.isMenu"></foot-bar>
 	</div>
 </template>
@@ -81,6 +80,10 @@
 		getShopDetail,
 		listNft
 	} from "../api";
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -140,8 +143,8 @@
 						image:require('../assets/images/icon4.png')
 					},
 				],
-				switchTitle: 'BSC Mainet',
-				switchVal: 56,
+				switchTitle: this.$store.state.choosenetwork=='56'?'BSC Mainet':'BSC Testnet',
+				switchVal: this.$store.state.choosenetwork,
 				choosebtn:1
 
 			}
@@ -155,18 +158,23 @@
 				this.isshowpop = true
 			},
 			choose(item,index,type){
-				console.log(this.$myContent.choosenetwork,222)
 				this.choosebtn=type
 				if(type==1&&index==0){
 					this.switchTitle = item.text
 					this.switchVal = item.value
-					this.$myContent.setNetwork(item.value);
+					this.$store.commit("updatenetwork", item.value);
 				}else if(type==2&&index==0){
 					this.switchTitle = item.text
 					this.switchVal = item.value
-					this.$myContent.setNetwork(item.value);
+					this.$store.commit("updatenetwork", item.value);
 				}
-				console.log(this.$myContent.choosenetwork,222)
+				//存入缓存
+				localStorage.setItem('switchNetwork',this.switchVal)
+				//let times = setTimeout(() => {
+					this.shoplist=[]
+					this.page = 1
+					this.listRequest()
+				//}, 1000)
 			},
 			onMore() {
 				let times = setTimeout(() => {
@@ -179,7 +187,7 @@
 				const params = {
 					pageNo: this.page,
 					pageSize: this.num,
-					//chainId:this.$myContent.choosenetwork,
+					chainId:this.$store.state.choosenetwork,
 				}
 				this.emptyflag = 0
 				listNft(params).then(res => {

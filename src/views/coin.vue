@@ -141,6 +141,7 @@
 						nftId: 'babaofan',
 						name: this.title,
 						description: this.description,
+						chainId:this.$store.state.choosenetwork,
 						//后期需要
 						//nftId // image// externalUrl	// attributes// backgroundColor	 // animationUrl // youtubeUrl // createTime/ updateTime
 					}
@@ -156,10 +157,7 @@
 			safeMint(uri) {
 				const web3 = new this.Web3(window.web3.currentProvider)
 				//合约地址
-				//测试
-				const addressNFT = "0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd"
-				//正式
-				//const addressNFT = "0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823"
+				const addressNFT =this.$store.state.choosenetwork=='56'?'0x1f9887C6F9Bd49952A68BBbFFDDF99334B6fF823':'0x990CfeB4d7EC56c95a08881896630AA6F92D04Dd'
 				const myContractNft = new web3.eth.Contract(AbiNft, addressNFT)
 				this.pageLoading = true
 				myContractNft.methods.safeMint(sessionStorage.getItem("myAddress"), this.tokenId, uri)

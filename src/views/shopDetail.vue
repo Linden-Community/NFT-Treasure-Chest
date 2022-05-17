@@ -182,9 +182,7 @@
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//合约地址测试
-							const address = "0x1A3B441D42F733fbC55774456D62081CAd462c3C"
-							//正式
-							//const address = "0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731"
+							const address =this.$store.state.choosenetwork=='56'?'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731':'0x1A3B441D42F733fbC55774456D62081CAd462c3C'
 							const myContract = new web3.eth.Contract(Abi, address)
 							myContract.methods.getOffShelfTime(this.detaillist.contract,this.detaillist.tokenId).call().then(
 							timesTamp => {
@@ -252,6 +250,7 @@
 			},
 			loglist() {
 				const params = {
+					chainId:this.$store.state.choosenetwork,
 					pageNo: this.page,
 					pageSize: this.num,
 					tokenId: this.detaillist.tokenId,

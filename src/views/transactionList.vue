@@ -157,6 +157,7 @@
 					pageSize: this.num,
 					owner: address,
 					type: listtype,
+					chainId:this.$store.state.choosenetwork,
 				}
 				this.emptyflag = 0
 				transactionList(params).then(res => {
