@@ -132,7 +132,7 @@
 						query: {
 							nftId: item.nftId,
 							buyFrom: item.buyFrom,
-							buyTo: item.buyTo,
+							//buyTo: item.buyTo,
 							createTime: item.createTime,
 							price: item.price,
 						}
@@ -142,7 +142,7 @@
 						name: 'listSellDetail',
 						query: {
 							nftId: item.nftId,
-							buyFrom: item.buyFrom,
+							//buyFrom: item.buyFrom,
 							buyTo: item.buyTo,
 							createTime: item.createTime,
 							price: item.price,

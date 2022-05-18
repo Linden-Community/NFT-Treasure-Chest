@@ -28,7 +28,7 @@
 							<span class="oneboxrtl oneboxrtl1" v-html="hightKeyword(item.name)">{{item.name}}</span>
 							<span class="oneboxrtl oneboxrtl2"
 								v-html="hightKeyword(item.tokenId)">{{`#${item.tokenId}`}}</span>
-							<span class="oneboxrtl oneboxrtl3" v-html="hightKeyword(item.creator)">{{item.creator==null?'itemcreator':item.creator}}</span>
+							<span class="oneboxrtl oneboxrtl3" v-html="hightKeyword(item.owner)">{{item.owner==null?'owner':item.owner}}</span>
 						</div>
 						<!-- <div class="oneboxrc">
 							<img v-show="item.price!=null" src="../assets/images/icon1.png" />

@@ -7,15 +7,15 @@
 			<div class="onecelltitle">{{detaillist.name}}</div>
 			<div class="onecell">
 				<span class="onecelll">Minted by</span>
-				<span class="onecellr">{{buyTo | ellipsis}}
-					<img class="copyimg" @click="copyclick(buyTo)" src="../assets/images/copy.png" >
+				<span class="onecellr">{{detaillist.creator==null?'buyFrom':detaillist.creator | ellipsis}}
+					<img class="copyimg" @click="copyclick(detaillist.creator)" src="../assets/images/copy.png" >
 				</span>
 			</div>
 			<div class="twocell">
 				<span class="twocelll">Sell to</span>
 				<span class="twocellr">
-					{{buyFrom | ellipsis}}
-					<img class="copyimg" @click="copyclick(buyFrom)" src="../assets/images/copy.png">
+					{{buyTo | ellipsis}}
+					<img class="copyimg" @click="copyclick(buyTo)" src="../assets/images/copy.png">
 				</span>
 			</div>
 			<div class="threecell">
@@ -89,7 +89,7 @@
 		mounted() {
 			localStorage.setItem('ispage', 'sell')
 			this.detailNft(this.$route.query.nftId)
-			this.buyFrom = this.$route.query.buyFrom
+			//this.buyFrom = this.$route.query.buyFrom
 			this.buyTo = this.$route.query.buyTo
 			this.createTime = this.$route.query.createTime
 			this.price = this.$route.query.price
