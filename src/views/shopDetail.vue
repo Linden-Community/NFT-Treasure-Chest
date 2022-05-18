@@ -1,14 +1,14 @@
 <template>
 	<div class="wrap">
 		<div class="headerbox">
-		<van-nav-bar title="NFT details" left-arrow @click-left="backup" />
+			<van-nav-bar title="NFT details" left-arrow @click-left="backup" />
 		</div>
 		<div class="contentone">
 			<div class="onecell"><span class="onecelll">Minted by</span><span
 					@click="gootheraddress(detaillist.creator)"
 					class="onecellr">{{detaillist.creator==null?'creator':detaillist.creator | ellipsis}}</span></div>
 			<div class="twocell"><span class="twocelll">{{detaillist.name==null?'name':detaillist.name}}</span>
-			<!-- <span class="twocellr">#{{detaillist.tokenId}}</span> -->
+				<!-- <span class="twocellr">#{{detaillist.tokenId}}</span> -->
 			</div>
 			<div class="threecell">
 				<img v-if="detaillist.image==null" src="../assets/images/zw.png" />
@@ -20,7 +20,8 @@
 					<span class="fourcelltwo"
 						@click="gootheraddress(detaillist.owner)">{{detaillist.owner==null?'detaillistowner':detaillist.owner | ellipsis}}</span>
 				</div>
-				<div class="fourcellr">End date{{detaillist.offSheftTime!=null?detaillist.offSheftTime.substring(0,16):''}}</div>
+				<div class="fourcellr">End
+					date{{detaillist.offSheftTime!=null?detaillist.offSheftTime.substring(0,16):''}}</div>
 			</div>
 		</div>
 		<div class="contenttwo">
@@ -29,22 +30,26 @@
 				<div class="contenttwotl">
 					<span><img src="../assets/images/icon1.png"></span>
 					<span class="spantwo">{{detaillist.price==null?'0.00':detaillist.price}}</span>
-					<span v-if="detaillist.uprice!=null" class="spanthree">{{`（$${detaillist.uprice==null?'':detaillist.uprice}）`}}</span>
+					<span v-if="detaillist.uprice!=null"
+						class="spanthree">{{`（$${detaillist.uprice==null?'':detaillist.uprice}）`}}</span>
 				</div>
-				<div v-if="detaillist.owner != myaddress" class="contenttwotr" @click="buyClick" v-throttle="3000">Buy now</div>
+				<div v-if="detaillist.owner != myaddress" class="contenttwotr" @click="buyClick" v-throttle="3000">Buy
+					now</div>
 				<div v-else class="contenttwotrn">Buy now</div>
 			</div>
 			<div>
 				<van-collapse v-model="activeNames">
 					<van-collapse-item title="Introduction to the works" name="0" icon="smile-comment-o" class='mycell'>
-						<div class="descriptionbox">{{detaillist.description==''?'No details yet':detaillist.description}}</div>
+						<div class="descriptionbox">
+							{{detaillist.description==''?'No details yet':detaillist.description}}</div>
 					</van-collapse-item>
 					<van-collapse-item title="Details of the works" name="1" icon="coupon-o" class='mycell'>
 						<van-cell title="Contract address">
 							<template #right-icon>
 								<span
 									class="copyadd">{{detaillist.contract==null?'detaillistcontract':detaillist.contract | ellipsis }}</span>
-								<img class="copyimg" @click="copyclick(detaillist.contract)" src="../assets/images/copy.png">
+								<img class="copyimg" @click="copyclick(detaillist.contract)"
+									src="../assets/images/copy.png">
 							</template>
 						</van-cell>
 						<van-cell title="Token ID">
@@ -67,21 +72,24 @@
 							</van-row>
 							<div v-if="datalist.length==0" class="nodata">No deal</div>
 							<div v-else class="hasdata">
-							<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
+								<van-row justify="space-between" v-for="(item,index) in datalist" :key='index'>
 									<van-col span="6">{{item.price}}</van-col>
 									<van-col span="6"><span class="addurl"
-											@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span></van-col>
+											@click="gootheraddress(item.buyFrom)">{{item.buyFrom | ellipsis}}</span>
+									</van-col>
 									<van-col span="6"><span class="addurl"
-											@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span></van-col>
-									<van-col span="6">{{item.createTime.substring(0, item.createTime.indexOf(' '))}}</van-col>
-							</van-row>
+											@click="gootheraddress(item.buyTo)">{{item.buyTo | ellipsis}}</span>
+									</van-col>
+									<van-col span="6">{{item.createTime.substring(0, item.createTime.indexOf(' '))}}
+									</van-col>
+								</van-row>
 							</div>
 						</van-collapse-item>
 					</van-list>
 				</van-collapse>
 			</div>
 		</div>
-	<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" van-loading  color="#0094ff"/>
+		<van-loading v-show="pageLoading" type="spinner" size="24px" class="loadingbox" van-loading color="#0094ff" />
 	</div>
 </template>
 <script>
@@ -109,15 +117,15 @@
 				activeNames: [0],
 				datalist: [],
 				detaillist: [],
-				copyIds:'',
+				copyIds: '',
 				page: 1,
 				num: 10,
 				loading: false,
 				finished: false,
-				pageLoading:false,
-				myaddress:sessionStorage.getItem('myAddress'),
-				ispage:'',
-				chainId:'',
+				pageLoading: false,
+				myaddress: sessionStorage.getItem('myAddress'),
+				ispage: '',
+				chainId: '',
 			}
 		},
 		created() {
@@ -129,22 +137,22 @@
 			this.ispage = this.$route.query.ispage
 		},
 		methods: {
-			backup(){
-				if(this.ispage=='me'){
+			backup() {
+				if (this.ispage == 'me') {
 					this.$router.push({
 						name: 'me',
-						ispage:'me'
+						ispage: 'me'
 					})
-				}else if(this.ispage=='home'){
+				} else if (this.ispage == 'home') {
 					this.$router.push({
 						name: 'Home',
 					})
-				}else{
+				} else {
 					this.$router.back()
 				}
 			},
-			onMore() {	
-				if(this.detaillist!=''){
+			onMore() {
+				if (this.detaillist != '') {
 					this.page++
 					this.loglist()
 				}
@@ -159,15 +167,15 @@
 			},
 			//跳转他人地址
 			gootheraddress(address) {
-				if(address==this.myaddress){
+				if (address == this.myaddress) {
 					this.$router.push({
 						name: 'me',
 						query: {
 							address: address,
-							ispage:'shopdeil'
+							ispage: 'shopdeil'
 						}
 					})
-				}else{
+				} else {
 					this.$router.push({
 						name: 'otherList',
 						query: {
@@ -175,15 +183,19 @@
 						}
 					})
 				}
-				
+
 			},
-			async getChainId(){
-				this.chainId =await ethereum.request({ method: 'eth_chainId' })
+			async getChainId() {
+				this.chainId = await ethereum.request({
+					method: 'eth_chainId'
+				})
 			},
 			//购买
 			buyClick() {
-				if((this.chainId=='0x61' && this.$store.state.choosenetwork =='56')||(this.chainId=='0x38' && this.$store.state.choosenetwork=='97')){
-					return	this.$toast('Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)')
+				if (parseInt(this.chainId,16)!=parseInt(this.$store.state.choosenetwork)) {
+					return this.$toast(
+						'Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)'
+						)
 				}
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
@@ -192,52 +204,57 @@
 						} else {
 							const web3 = new this.Web3(window.web3.currentProvider)
 							//合约地址测试
-							const address =this.$store.state.choosenetwork=='56'?'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731':'0x1A3B441D42F733fbC55774456D62081CAd462c3C'
+							const address = this.$store.state.choosenetwork == '56' ?
+								'0xAcD1fD491Eb468f93209F2e63cCFdc9926af7731' :
+								'0x1A3B441D42F733fbC55774456D62081CAd462c3C'
 							const myContract = new web3.eth.Contract(Abi, address)
-							myContract.methods.getOffShelfTime(this.detaillist.contract,this.detaillist.tokenId).call().then(
-							timesTamp => {
-								//获取当前时间戳单位毫秒
-								var dataTime = new Date().getTime()
-								//当前时间戳与上架时间（秒）相比
-								console.log('from timesTamp :' + timesTamp, dataTime)
-								if (timesTamp * 1000 - dataTime > 0) {
-									console.log(timesTamp * 1000 - dataTime)
-									//商品未下架获取商品价格
-									//NFT上架价格
-									myContract.methods.getPrices(this.detaillist.contract,this.detaillist.tokenId).call().then(
-										prices => {
-											console.log('from prices :' + prices)
-											var myvalue = BigNumber(prices)
-											this.pageLoading = true
-											//var myvalue = BigNumber(web3.utils.toWei(this.detaillist.price.toString(), 'ether'))
-											//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
-											myContract.methods.buy(this.detaillist.contract,this.detaillist.tokenId).send({
-												from: res[0],
-												value: myvalue//动态获取商品价格
-											}).then(res => {
-												console.log('from res :' + res)
-												if (JSON.stringify(res.status) == 'true') {
-													this.$toast('Authorization succeeded')
-													console.log("success")
-													//刷新页面
-													//location.reload()
-													this.pageLoading = false
-													this.$router.push('me') 
-												} else {
-													this.$toast(res.message)
-													console.log(res.message)
-												}
-											}).catch((error) => {
-												this.pageLoading = false
-												//this.$toast(error.message)
-											})
-										})
-									
-								} else {
-									console.log(timesTamp * 1000 - dataTime)
-									this.$toast('The product has been taken off the shelf')
-								}
-							})
+							myContract.methods.getOffShelfTime(this.detaillist.contract, this.detaillist.tokenId)
+								.call().then(
+									timesTamp => {
+										//获取当前时间戳单位毫秒
+										var dataTime = new Date().getTime()
+										//当前时间戳与上架时间（秒）相比
+										console.log('from timesTamp :' + timesTamp, dataTime)
+										if (timesTamp * 1000 - dataTime > 0) {
+											console.log(timesTamp * 1000 - dataTime)
+											//商品未下架获取商品价格
+											//NFT上架价格
+											myContract.methods.getPrices(this.detaillist.contract, this.detaillist
+												.tokenId).call().then(
+												prices => {
+													console.log('from prices :' + prices)
+													var myvalue = BigNumber(prices)
+													this.pageLoading = true
+													//var myvalue = BigNumber(web3.utils.toWei(this.detaillist.price.toString(), 'ether'))
+													//购买NFT 获取是否授权（授权在上架商品时操作只需操作一次 获取时间戳 获取价格 
+													myContract.methods.buy(this.detaillist.contract, this
+														.detaillist.tokenId).send({
+														from: res[0],
+														value: myvalue //动态获取商品价格
+													}).then(res => {
+														console.log('from res :' + res)
+														if (JSON.stringify(res.status) == 'true') {
+															this.$toast('Authorization succeeded')
+															console.log("success")
+															//刷新页面
+															//location.reload()
+															this.pageLoading = false
+															this.$router.push('me')
+														} else {
+															this.$toast(res.message)
+															console.log(res.message)
+														}
+													}).catch((error) => {
+														this.pageLoading = false
+														//this.$toast(error.message)
+													})
+												})
+
+										} else {
+											console.log(timesTamp * 1000 - dataTime)
+											this.$toast('The product has been taken off the shelf')
+										}
+									})
 						}
 					})
 				} else {
@@ -260,7 +277,7 @@
 			},
 			loglist() {
 				const params = {
-					chainId:this.$store.state.choosenetwork,
+					chainId: this.$store.state.choosenetwork,
 					pageNo: this.page,
 					pageSize: this.num,
 					tokenId: this.detaillist.tokenId,
@@ -270,14 +287,14 @@
 					if (res.code == "200") {
 						if (this.page == 1) {
 							this.datalist = res.result.list
-						}else{
+						} else {
 							this.datalist = this.datalist.concat(res.result.list)
 						}
 						this.loading = false
 						if (res.result.list.length == 0 || res.result.list.length < 10) {
 							this.finished = true
 							return
-						}	
+						}
 					} else {
 						this.$toast(res.message)
 					}
@@ -287,19 +304,22 @@
 	}
 </script>
 <style scoped>
-	.hasdata{
+	.hasdata {
 		margin: 10px auto;
 	}
-	.nodata{
+
+	.nodata {
 		margin: 10px auto;
 		text-align: center;
 	}
+
 	.headerbox {
 		position: fixed;
 		width: 100%;
-		top:0;
+		top: 0;
 		border-bottom: 10px solid #F7F7F7;
 	}
+
 	.addurl {
 		border-bottom: 1px solid #333333;
 	}
@@ -342,7 +362,7 @@
 		/* overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap; */
-		display: inline-block;	
+		display: inline-block;
 	}
 
 	.twocellr {
@@ -353,10 +373,12 @@
 	.threecell {
 		width: 100%;
 	}
+
 	.imgobject {
 		object-fit: cover;
 		object-position: 50% 50%;
 	}
+
 	.threecell img {
 		width: 100%;
 		/* height: 300px; */
@@ -453,29 +475,33 @@
 		font-size: 13px;
 		margin-top: 10px;
 	}
-.contenttwotrn{
-	float: right;
-	width: 105px;
-	height: 27px;
-	line-height: 27px;
-	background: #CCCCCC;
-	border-radius: 8px;
-	font-family: SourceHanSansCN-Regular, SourceHanSansCN;
-	font-weight: 400;
-	color: #FFFFFF;
-	text-align: center;
-	font-size: 13px;
-	margin-top: 10px;
-}
+
+	.contenttwotrn {
+		float: right;
+		width: 105px;
+		height: 27px;
+		line-height: 27px;
+		background: #CCCCCC;
+		border-radius: 8px;
+		font-family: SourceHanSansCN-Regular, SourceHanSansCN;
+		font-weight: 400;
+		color: #FFFFFF;
+		text-align: center;
+		font-size: 13px;
+		margin-top: 10px;
+	}
+
 	.mycell {
 		background-color: #FFFFFF;
 	}
-.descriptionbox{
-	padding: 10px 20px;
-	background: #F7F7F7;
-	font-size: 12px;
-	color: #666666;
-}
+
+	.descriptionbox {
+		padding: 10px 20px;
+		background: #F7F7F7;
+		font-size: 12px;
+		color: #666666;
+	}
+
 	.copyadd {
 		font-size: 12px;
 		color: #999999;
@@ -521,10 +547,11 @@
 		color: #666666;
 		margin-top: 8px;
 	}
-	.loadingbox{
+
+	.loadingbox {
 		width: 100%;
 		position: fixed;
-		top:50%;
+		top: 50%;
 		text-align: center;
 	}
 </style>

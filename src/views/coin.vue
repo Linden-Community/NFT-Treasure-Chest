@@ -132,8 +132,8 @@
 				}
 				this.tokenId = this.tokenId + num
 			},
-			mintBtn() {
-				if((this.chainId=='0x61' && this.$store.state.choosenetwork =='56')||(this.chainId=='0x38' && this.$store.state.choosenetwork=='97')){
+			mintBtn() {			
+				if(parseInt(this.chainId,16)!=parseInt(this.$store.state.choosenetwork)){
 					return	this.$toast('Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)')
 				}
 				this.getCurrentTime()

@@ -67,7 +67,8 @@
 				<van-collapse v-model="activeNames">
 					<van-collapse-item title="Introduction to the works" name="0" class='mycell'>
 						<div class="descriptionbox">
-							{{detaillist.description==''?'No details yet':detaillist.description}}</div>
+							{{detaillist.description==''?'No details yet':detaillist.description}}
+						</div>
 					</van-collapse-item>
 					<van-collapse-item title="Details of the works" name="1" class='mycell'>
 						<van-cell title="Contract address">
@@ -247,11 +248,10 @@
 			},
 			//授权
 			empower() {
-				if ((this.chainId == '0x61' && this.$store.state.choosenetwork == '56') || (this.chainId == '0x38' && this
-						.$store.state.choosenetwork == '97')) {
+				if (parseInt(this.chainId,16)!=parseInt(this.$store.state.choosenetwork)) {
 					return this.$toast(
 						'Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)'
-						)
+					)
 				}
 				if (this.amount == '' || this.amount < 0.0001 || this.amount > 9999.9999) {
 					this.$toast('Please enter a number between 0.0001-9999.9999')
@@ -452,6 +452,7 @@
 		/* height: 300px; */
 		margin: 0 auto;
 	}
+
 	.coinCompany {
 		/* width: 18px; */
 		height: 18px;
@@ -460,7 +461,8 @@
 		top: 0;
 		margin: 15px 0;
 	}
-	.choosebox{
+
+	.choosebox {
 		height: 18px;
 		position: absolute;
 		top: 0;

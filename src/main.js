@@ -23,7 +23,7 @@ import {
 } from 'vant';
 Vue.use(Button,Toast)
 Vue.use(VanImage);
-
+Toast.setDefaultOptions({ duration: 3000 });
 new Vue({
 	router,
 	store,

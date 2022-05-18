@@ -159,7 +159,7 @@
 			//获取链id
 			async getChainId(){
 				const chainId =await ethereum.request({ method: 'eth_chainId' })
-				if((chainId=='0x61' && this.switchVal=='56')||(chainId=='0x38' && this.switchVal=='97')){
+				if(parseInt(chainId,16)!=parseInt(this.switchVal)){
 					this.$toast('Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)')
 				}
 			},
