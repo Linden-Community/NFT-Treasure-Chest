@@ -67,10 +67,16 @@
 				tokenId: '',
 				imageData: '',
 				pageLoading: false,
+				chainId:'',
 			}
 		},
-		mounted() {},
+		created() {
+			this.getChainId()
+		},
 		methods: {
+			async getChainId(){
+				this.chainId =await ethereum.request({ method: 'eth_chainId' })
+			},
 			checkEnter(e) {
 				var et = e || window.event;
 				var keycode = et.charCode || et.keyCode;
@@ -90,7 +96,6 @@
 				this.imageData = ''
 			},
 			beforeRead(file) {
-
 				var fileType = file.type.toLowerCase()
 				if (fileType == 'image/jpeg' || fileType == 'image/png' || fileType == 'image/jpeg') {
 					let FormDatas = new FormData()
@@ -128,7 +133,9 @@
 				this.tokenId = this.tokenId + num
 			},
 			mintBtn() {
-				console.log(this.imageData, 2222)
+				if((this.chainId=='0x61' && this.$store.state.choosenetwork =='56')||(this.chainId=='0x38' && this.$store.state.choosenetwork=='97')){
+					return	this.$toast('Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)')
+				}
 				this.getCurrentTime()
 				if (this.title == '') {
 					this.$toast('Please enter the title')

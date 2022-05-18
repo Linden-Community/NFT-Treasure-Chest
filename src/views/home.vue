@@ -151,10 +151,18 @@
 		},
 		created() {
 			console.log(this.$store.state.choosenetwork,localStorage.getItem('switchNetwork'))
+			this.getChainId()
 			this.listRequest()
-			this.empower() //授权账户
+			this.empower() //授权账户	
 		},
 		methods: {
+			//获取链id
+			async getChainId(){
+				const chainId =await ethereum.request({ method: 'eth_chainId' })
+				if((chainId=='0x61' && this.switchVal=='56')||(chainId=='0x38' && this.switchVal=='97')){
+					this.$toast('Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)')
+				}
+			},
 			isshowmenu() {
 				this.isshowpop = true
 			},
@@ -169,6 +177,7 @@
 					this.switchVal = item.value
 					this.$store.commit("updatenetwork", item.value);
 				}
+				this.isshowpop = false
 				//存入缓存
 				localStorage.setItem('switchNetwork',this.switchVal)
 				//let times = setTimeout(() => {

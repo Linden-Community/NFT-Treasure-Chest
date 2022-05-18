@@ -116,8 +116,12 @@
 				finished: false,
 				pageLoading:false,
 				myaddress:sessionStorage.getItem('myAddress'),
-				ispage:''
+				ispage:'',
+				chainId:'',
 			}
+		},
+		created() {
+			this.getChainId()
 		},
 		mounted() {
 			//sessionStorage.setItem('shopdelpage', 'shopdelpage')
@@ -173,8 +177,14 @@
 				}
 				
 			},
+			async getChainId(){
+				this.chainId =await ethereum.request({ method: 'eth_chainId' })
+			},
 			//购买
 			buyClick() {
+				if((this.chainId=='0x61' && this.$store.state.choosenetwork =='56')||(this.chainId=='0x38' && this.$store.state.choosenetwork=='97')){
+					return	this.$toast('Wallet network is inconsistent with Open NFT network, please reselect; To use Open NFT, switch to (BSC Mainnet) or (BSC Testnet)')
+				}
 				if (window.ethereum) {
 					window.ethereum.enable().then((res) => {
 						if (!res[0]) {
