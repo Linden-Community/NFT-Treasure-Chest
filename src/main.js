@@ -7,8 +7,9 @@ import Web3 from 'web3'
 import axios from 'axios'
 import filters from "./api/filter.js"
 import VueClipboard from 'vue-clipboard2'
+import Vconsole from 'vconsole'
 import '@/assets/css/reset.css'
-
+//process.env.NODE_ENV === 'development' && new Vconsole()
 Vue.config.productionTip = false
 Vue.prototype.Web3 = Web3
 Vue.prototype.$http = axios

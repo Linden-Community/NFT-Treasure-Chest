@@ -145,7 +145,7 @@
 					const params = {
 						tokenId: this.tokenId, //年月日时分秒+5位随机数
 						image: this.imageData,
-						nftId: 'babaofan',
+						nftId: this.$store.state.choosenetwork=='56'?'linden':'babaofan',
 						name: this.title,
 						description: this.description,
 						chainId:this.$store.state.choosenetwork,
