@@ -1,6 +1,17 @@
-# default
+# NFT Treasure Chest
 
-## Project setup
+![banner](./src/assets/images/logoicon.png)
+NFT  Treasure  Chest   is a user-led decentralized storage encryption cloud disk based on IPFS, which solves the problem of user privacy leakage, rights and identity, and also allows data producers to truly enjoy data ownership. Provide creators with multimedia data (files, pictures, audio, video) on-chain permanent storage and other core functions and services. At the same time, for each work of the creator, it is supported to be directly cast as an NFT. Once the NFT is cast on the chain, creators can sell their work as an NFT. In this way, the issue of revenue for content creators is solved. Creators can also permanently store their works on the cloud disk platform to ensure the permanent storage of their works.
+
+
+*Warning* This project is still **pre-release** and is not ready for production usage.
+
+[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/ipdr/ipdr/master/LICENSE)
+[![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+
+
 ```
 npm install
 ```
@@ -15,11 +26,6 @@ npm run serve
 npm run build
 ```
 
-### Run your tests
-```
-npm run test
-```
-
 ### Lints and fixes files
 ```
 npm run lint
@@ -27,3 +33,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+## License
+
+MIT © 2021 lindensys.com
