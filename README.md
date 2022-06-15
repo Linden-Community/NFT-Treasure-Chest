@@ -1,7 +1,9 @@
 # NFT Treasure Chest
 
-![banner](./src/assets/images/logoicon.png)
-NFT  Treasure  Chest   is a user-led decentralized storage encryption cloud disk based on IPFS, which solves the problem of user privacy leakage, rights and identity, and also allows data producers to truly enjoy data ownership. Provide creators with multimedia data (files, pictures, audio, video) on-chain permanent storage and other core functions and services. At the same time, for each work of the creator, it is supported to be directly cast as an NFT. Once the NFT is cast on the chain, creators can sell their work as an NFT. In this way, the issue of revenue for content creators is solved. Creators can also permanently store their works on the cloud disk platform to ensure the permanent storage of their works.
+![banner](./src/assets/images/infoimg.png)
+
+
+NFT Treasure Chest is a user-led decentralized storage encryption cloud disk based on IPFS, which solves the problem of user privacy leakage, rights and identity, and also allows data producers to truly enjoy data ownership. Provide creators with multimedia data (files, pictures, audio, video) on-chain permanent storage and other core functions and services. At the same time, for each work of the creator, it is supported to be directly cast as an NFT. Once the NFT is cast on the chain, creators can sell their work as an NFT. In this way, the issue of revenue for content creators is solved. Creators can also permanently store their works on the cloud disk platform to ensure the permanent storage of their works.
 
 
 *Warning* This project is still **pre-release** and is not ready for production usage.
