@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  gateway0:
+    build:
+      context: ../
+      dockerfile: Dockerfile_gateway
+    image: $env_image
+    container_name: gateway0
+    restart: always
+    environment:
+      - url=http://localhost:5001
+      - mongoUrl=$env_mongoUrl
+      - mqServer=$env_mqServer
+networks:
+  default:
+    name: flipped_default
+
+
